@@ -140,12 +140,12 @@
       this[globalName] = mainExports;
     }
   }
-})({"3lSIl":[function(require,module,exports) {
+})({"1zAAB":[function(require,module,exports) {
 var HMR_HOST = null;
 var HMR_PORT = null;
 var HMR_SECURE = false;
 var HMR_ENV_HASH = "d751713988987e9331980363e24189ce";
-module.bundle.HMR_BUNDLE_ID = "e9312995559a911a6f9b63a6bd78eeec"; // @flow
+module.bundle.HMR_BUNDLE_ID = "bd7020bfe86741806cbc630bbe1883d1"; // @flow
 /* global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE */ /*::
 import type {
   HMRAsset,
@@ -380,7 +380,7 @@ function hmrAcceptRun(bundle/*: ParcelRequire */ , id/*: string */ ) {
     acceptedAssets[id] = true;
 }
 
-},{}],"30Yv7":[function(require,module,exports) {
+},{}],"69epD":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 //fetch json!
 var _spriteLoader = require("./SpriteLoader");
@@ -421,7 +421,7 @@ level.then((data)=>{
     spriteLoader.loadCharacters();
 });
 
-},{"./SpriteLoader":"3BUNX","./Battlefield":"1rb7Z","./Hero":"3gVH8","@parcel/transformer-js/src/esmodule-helpers.js":"367CR","./Observer":"3FC8D"}],"3BUNX":[function(require,module,exports) {
+},{"./SpriteLoader":"6FA1B","./Battlefield":"1sPzd","./Hero":"662zo","./Observer":"2jFtE","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"6FA1B":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 exports.default = SpriteLoader;
@@ -484,7 +484,7 @@ function Movement(id, amount, fileType, height, width) {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"367CR"}],"367CR":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"4gGoX":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -516,7 +516,7 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"1rb7Z":[function(require,module,exports) {
+},{}],"1sPzd":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 exports.default = Battlefield;
@@ -534,7 +534,7 @@ function Battlefield(battlefield, elements) {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"367CR"}],"3gVH8":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"662zo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 exports.default = Hero;
@@ -709,7 +709,7 @@ exports.default = Hero;
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"367CR"}],"3FC8D":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"2jFtE":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 exports.default = Observer;
@@ -747,6 +747,5 @@ function Observer() {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"367CR"}]},["3lSIl","30Yv7"], "30Yv7", "parcelRequiree868")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}]},["1zAAB","69epD"], "69epD", "parcelRequiree868")
 
-//# sourceMappingURL=index.bd78eeec.js.map
