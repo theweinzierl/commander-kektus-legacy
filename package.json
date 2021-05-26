@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel serve ./src/index.html --dist-dir ./docs --no-source-maps"
+    "start": "parcel serve ./src/index.html --public-url ./ --dist-dir ./docs --no-source-maps"
   },
   "keywords": [],
   "author": "",
