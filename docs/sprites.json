@@ -1,0 +1,168 @@
+{
+    "spriteCount": 19,
+    "characters": [
+        {
+            "name": "hero",
+            "movements": [
+                {
+                    "id": "left_run",
+                    "amount": 4,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_run",
+                    "amount": 4,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_stand",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_stand",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_jump",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_jump",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_fall",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_fall",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_pogojump",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_pogojump",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_pogofall",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_pogofall",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_jump_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_jump_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "left_run_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "right_run_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "reference": false,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "up_jump_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "down_jump_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "fileType": ".png"
+                },
+                {
+                    "id": "up_stand_shoot",
+                    "amount": 1,
+                    "height": 0,
+                    "width": 0,
+                    "fileType": ".png"
+                }
+            ]
+        }
+    ],
+    "obstacles": [
+        {
+            "id": "floor",
+            "amount": 1,
+            "height": 0,
+            "width": 0,
+            "fileType": ".png"
+        }
+    ]
+}
