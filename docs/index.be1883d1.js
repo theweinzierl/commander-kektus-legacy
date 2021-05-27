@@ -402,18 +402,19 @@ var battlefield = null;
 var elements = [];
 var spriteLoader = null;
 var observer = null;
+var calcInterval = 33;
 function onSpritesLoaded() {
     // load Characters
     //  console.log("sprites loaded");
     elements.push(new _heroDefault.default(spriteLoader.getCharacter('hero')));
-    battlefield = new _battlefieldDefault.default(document.getElementById('battlefield'), elements);
+    battlefield = new _battlefieldDefault.default(document.getElementById('battlefield'), elements, calcInterval);
     observer = new _observerDefault.default();
-    setInterval(onRefresh, 33);
+    setInterval(onRefresh, calcInterval);
 }
 function onRefresh() {
     battlefield.refresh();
     observer.observe(elements[0]);
-    elements[0].calculate();
+    elements[0].calculate(calcInterval);
 }
 level.then((data)=>{
     //console.log(data);
@@ -444,7 +445,7 @@ function SpriteLoader(level, onSuccess) {
                 }
             };
             character.movements.forEach(function iterateMovements(movement) {
-                tmpMovement = new Movement(movement.id, movement.amount, movement.fileType, movement.height, movement.width);
+                tmpMovement = new Movement(movement.id, movement.amount, movement.fileType, movement.height, movement.width, movement.reference, movement.frameInterval);
                 console.log(movement.amount);
                 for(i = 0; i < movement.amount; i++){
                     console.log(this.spritesPath + character.name + movement.id + movement.fileType);
@@ -453,7 +454,11 @@ function SpriteLoader(level, onSuccess) {
                     tmpImage.addEventListener('error', (err)=>{
                         console.log(err);
                     });
-                    tmpImage.src = this.spritesPath + character.name + '_' + movement.id + i + movement.fileType;
+                    let fileId = '';
+                    if (movement.reference !== '') fileId = movement.reference;
+                    else fileId = movement.id;
+                    if (movement.amount <= 1) tmpImage.src = this.spritesPath + character.name + '_' + fileId + movement.fileType;
+                    else tmpImage.src = this.spritesPath + character.name + '_' + fileId + i + movement.fileType;
                     tmpMovement.setSprite(i, tmpImage);
                 }
                 this.characters[character.name]['movements'][movement.id] = tmpMovement;
@@ -469,16 +474,20 @@ function SpriteLoader(level, onSuccess) {
         if (this.charactersSpriteCount + this.obstaclesSpriteCount === 0) this.onSuccess();
     };
     this.getCharacter = (characterName)=>{
+        console.log(this.characters[characterName]);
         return this.characters[characterName];
     };
 }
-function Movement(id, amount, fileType, height, width) {
+function Movement(id, amount, fileType, height, width, reference, frameInterval) {
     this.id = id;
     this.amount = amount;
     this.fileType = fileType;
     this.height = height;
     this.width = width;
+    this.reference = reference;
     this.sprites = new Array(this.amount);
+    this.frameDuration = 0;
+    this.frameInterval = frameInterval;
     this.setSprite = (index, image)=>{
         this.sprites[index] = image;
     };
@@ -520,16 +529,17 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 exports.default = Battlefield;
-function Battlefield(battlefield, elements) {
+function Battlefield(battlefield, elements, refreshInterval) {
     this.elements = elements;
     this.battlefield = battlefield;
+    this.refreshInterval = refreshInterval;
     this.battlefield.getContext('2d').scale(2, 2);
     this.refresh = ()=>{
         //console.log("refresh!");
         let ctx = this.battlefield.getContext('2d');
         ctx.clearRect(0, 0, this.battlefield.width, this.battlefield.height);
         elements.forEach((element)=>{
-            element.draw(ctx);
+            element.draw(ctx, refreshInterval);
         });
     };
 }
@@ -538,79 +548,22 @@ function Battlefield(battlefield, elements) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 exports.default = Hero;
-/* function KeyPressRegistrar(){
-    
-    this.keyLeft = [];
-    this.keyRight = [];
-
-    this.registerKeyLeft = (callback) => {
-        this.keyLeft.push(callback);
-        console.log(callback);
-    };
-
-    this.registerKeyRight = (callback) => {
-        this.keyRight.push(callback);
-    };
-
-    document.addEventListener('keydown', event => {
-        var callbacks;
-        switch(event.key){
-            case 'ArrowLeft':
-                callbacks = this.keyLeft
-                break;
-            case 'ArrowRight':
-                callbacks = this.keyRight
-                break;
-        }
-        
-        callbacks.forEach(element => {element()});        
-    });
-
-} */ /* function SpritesLoader(path, id, amount, callback){
-
-    this.path = path;
-    this.id = id;
-    this.amount = amount;
-    this.callback = callback;
-    this.images = [];
-
-    this.load = () => {
-
-        for(i = 0; i < amount; i++){
-
-            let tmpImage = new Image();
-            tmpImage.addEventListener('load', this.ackLoad);
-            tmpImage.src = this.path + id + i + '.png';
-            console.log("Loading: " + this.path + id + i + '.png');
-            this.images.push(tmpImage);
-        }       
-    
-    };
-
-    this.ackLoad = (ev) => {
-       //this.images.push(ev.target);
-        //this.amount--;
-        console.log("Loaded: " + ev.target)
-        if (this.amount === 0){
-            console.log("loades all sprites");
-            callback(this.images);
-            
-        }
-    }
-    
-
-} */ function Hero(character) {
+function Hero(character) {
     this.character = character;
     this.movements = this.character.movements;
     this.curMovement = 'stand';
-    this.direction = 'left';
-    this.directionY = '';
-    this.curMovementId = 'left_stand';
-    this.mathDirection = 0;
+    this.curSecondaryMovement = 'none';
+    this.curDirectionX = 'left';
+    this.curDirectionY = 'none';
+    this.curMovementId = 'stand_left';
+    this.mathDirectionX = 0;
+    this.mathDirectionY = 0;
     this.posX = 5;
     this.posY = 2;
     this.speedX = 3;
     this.index = 0;
+    this.shootingDuration = 500;
+    this.curShootingTime = 0;
     this.jumpHeight = 30;
     this.jumpDirection = 1;
     this.jumpSpeed = 3;
@@ -626,27 +579,41 @@ exports.default = Hero;
         if (ev.key.indexOf('Arrow') !== -1) {
             if (ev.key === 'ArrowLeft') this.keyRegistrar[ev.key] = this.keyRegistrar['ArrowRight'] ? false : true;
             else if (ev.key === 'ArrowRight') this.keyRegistrar[ev.key] = this.keyRegistrar['ArrowLeft'] ? false : true;
+            if (ev.key === 'ArrowUp') this.keyRegistrar[ev.key] = this.keyRegistrar['ArrowDown'] ? false : true;
+            else if (ev.key === 'ArrowDown') this.keyRegistrar[ev.key] = this.keyRegistrar['ArrowUp'] ? false : true;
         } else this.keyRegistrar[ev.key] = true;
-        this.processKeyEvent();
+    //  this.processKeyEvent();
     });
     document.addEventListener('keyup', (ev)=>{
         // if(!Object.keys(this.keyRegistrar).includes(ev.key)) return;
         this.keyRegistrar[ev.key] = false;
-        this.processKeyEvent();
+    //   this.processKeyEvent();
     });
-    this.processKeyEvent = function processKeyEvent() {
-        // define direction
+    this.defineDirection = function defineDirection() {
+        // define X-direction
         if (this.keyRegistrar['ArrowLeft'] === true) {
-            this.direction = 'left';
-            this.mathDirection = -1;
+            this.curDirectionX = 'left';
+            this.mathDirectionX = -1;
         } else if (this.keyRegistrar['ArrowRight'] === true) {
-            this.direction = 'right';
-            this.mathDirection = 1;
-        } else this.mathDirection = 0;
-        if (this.keyRegistrar['ArrowUp'] === true) this.direction = 'up';
-        else if (this.keyRegistrar['ArrowDown'] === true) this.direction = 'down';
-        // interrupts
-        if (this.curMovement === 'pogojump' || this.curMovement === 'pogofall') {
+            this.curDirectionX = 'right';
+            this.mathDirectionX = 1;
+        } else // curDirectionX shall always maintain last direction
+        this.mathDirectionX = 0;
+        // define Y-direction
+        if (this.keyRegistrar['ArrowUp'] === true) {
+            this.curDirectionY = 'up';
+            this.mathDirectionY = -1;
+        } else if (this.keyRegistrar['ArrowDown'] === true) {
+            this.curDirectionY = 'down';
+            this.mathDirectionY = 1;
+        } else {
+            this.curDirectionY = 'none';
+            this.mathDirectionY = 0;
+        }
+    };
+    this.defineMovement = function defineMovement() {
+        // define movement-interrupts
+        if ((this.curMovement === 'pogojump' || this.curMovement === 'pogofall') && !this.blockPogo) {
             if (this.keyRegistrar['Control'] || this.keyRegistrar['AltGraph']) this.curMovement = 'fall';
         }
         // define movement
@@ -666,18 +633,23 @@ exports.default = Hero;
         }
         if (this.curMovement !== 'pogojump' && this.curMovement !== 'pogofall') {
             if (this.keyRegistrar[' '] && !this.blockShoot) {
-                if (this.curMovement.indexOf('stand') !== -1) ;
-                else this.curMovement += '_shoot';
-                this.mathDirection = 0;
+                // defines secondary movement shoot
+                this.curSecondaryMovement = "shoot";
+                this.mathDirectionX = 0;
             }
         }
-        console.log(this.curMovement);
+    };
+    this.processKeyEvent = function processKeyEvent() {
+        if (this.curSecondaryMovement !== 'shoot') {
+            this.defineDirection();
+            this.defineMovement();
+        }
         this.blockJump = this.keyRegistrar['Control'];
         this.blockPogo = this.keyRegistrar['AltGraph'];
         this.blockShoot = this.keyRegistrar[' '];
     };
     this.moveX = ()=>{
-        this.posX = this.posX + this.speedX * this.mathDirection;
+        this.posX = this.posX + this.speedX * this.mathDirectionX;
     };
     this.moveY = ()=>{
         if (this.curMovement === 'jump') this.posY -= this.jumpSpeed;
@@ -685,13 +657,30 @@ exports.default = Hero;
         else if (this.curMovement === 'pogojump') this.posY -= this.pogoSpeed;
         else if (this.curMovement === 'pogofall') this.posY += this.pogoSpeed;
     };
-    this.draw = (ctx)=>{
-        this.curMovementId = this.direction + "_" + this.curMovement;
-        this.index = (this.index + 1) % this.movements[this.curMovementId].amount;
+    this.getMovementId = function getMovementId() {
+        let returnValue = '';
+        let direction = '';
+        // set secondary Movement
+        if (this.curSecondaryMovement !== 'none') returnValue = this.curMovement + '_' + this.curSecondaryMovement;
+        else returnValue = this.curMovement;
+        // set principal direction - only consider Y-Direction while shooting and not running!
+        if (this.curSecondaryMovement === 'shoot' && this.curMovement !== 'run') {
+            if (this.curDirectionY !== 'none') direction = this.curDirectionY;
+            else direction = this.curDirectionX;
+        } else direction = this.curDirectionX;
+        return returnValue + "_" + direction;
+    };
+    this.draw = (ctx, interval)=>{
+        this.curMovementId = this.getMovementId();
+        if (this.movements[this.curMovementId].frameInterval <= this.movements[this.curMovementId].frameDuration) {
+            this.index = (this.index + 1) % this.movements[this.curMovementId].amount;
+            this.movements[this.curMovementId].frameDuration = 0;
+        }
+        this.movements[this.curMovementId].frameDuration += interval;
         ctx.drawImage(this.movements[this.curMovementId].sprites[this.index], this.posX, this.posY);
     };
-    this.calculate = ()=>{
-        //  console.log('X: ' + this.posX + ' Y: ' + this.posY +  " curMovement: " + this.curMovement + ' curMovementId: ' + this.curMovementId);
+    this.calculate = (interval)=>{
+        this.processKeyEvent();
         // gets called repeatedly; enables self-controlled animation
         this.moveY();
         this.moveX();
@@ -699,6 +688,11 @@ exports.default = Hero;
             if (this.jumpStartPosY - this.jumpHeight >= this.posY) this.curMovement = 'fall';
         } else if (this.curMovement === 'pogojump') {
             if (this.jumpStartPosY - this.pogoHeight >= this.posY) this.curMovement = 'pogofall';
+        }
+        this.curShootingTime += interval;
+        if (this.curShootingTime >= this.shootingDuration) {
+            this.curShootingTime = 0;
+            this.curSecondaryMovement = 'none';
         }
     };
     this.invokeCollision = function invokeCollision(vector) {

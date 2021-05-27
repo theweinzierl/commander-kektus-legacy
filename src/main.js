@@ -18,6 +18,7 @@ var battlefield = null;
 var elements = [];
 var spriteLoader = null;
 var observer = null;
+var calcInterval = 33;
 
 
 function onSpritesLoaded(){   
@@ -27,18 +28,18 @@ function onSpritesLoaded(){
 
     elements.push(new Hero(spriteLoader.getCharacter('hero')));
 
-    battlefield = new Battlefield(document.getElementById('battlefield'), elements);
+    battlefield = new Battlefield(document.getElementById('battlefield'), elements, calcInterval);
 
     observer = new Observer();
 
-    setInterval(onRefresh, 33);
+    setInterval(onRefresh, calcInterval);
 
 }
 
 function onRefresh(){
     battlefield.refresh();
     observer.observe(elements[0]);
-    elements[0].calculate();
+    elements[0].calculate(calcInterval);
 }
 
 level.then(

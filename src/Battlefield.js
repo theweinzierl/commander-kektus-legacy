@@ -1,9 +1,10 @@
 export default Battlefield;
 
-function Battlefield(battlefield, elements){
+function Battlefield(battlefield, elements, refreshInterval){
 
     this.elements = elements;
     this.battlefield = battlefield;
+    this.refreshInterval = refreshInterval;
 
     this.battlefield.getContext('2d').scale(2,2);
 
@@ -14,7 +15,7 @@ function Battlefield(battlefield, elements){
         ctx.clearRect(0, 0, this.battlefield.width, this.battlefield.height);
 
         elements.forEach(element => {
-            element.draw(ctx);
+            element.draw(ctx, refreshInterval);
         });
     };
 

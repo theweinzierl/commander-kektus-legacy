@@ -1,83 +1,23 @@
 export default Hero;
 
-/* function KeyPressRegistrar(){
-    
-    this.keyLeft = [];
-    this.keyRight = [];
-
-    this.registerKeyLeft = (callback) => {
-        this.keyLeft.push(callback);
-        console.log(callback);
-    };
-
-    this.registerKeyRight = (callback) => {
-        this.keyRight.push(callback);
-    };
-
-    document.addEventListener('keydown', event => {
-        var callbacks;
-        switch(event.key){
-            case 'ArrowLeft':
-                callbacks = this.keyLeft
-                break;
-            case 'ArrowRight':
-                callbacks = this.keyRight
-                break;
-        }
-        
-        callbacks.forEach(element => {element()});        
-    });
-
-} */
-
-/* function SpritesLoader(path, id, amount, callback){
-
-    this.path = path;
-    this.id = id;
-    this.amount = amount;
-    this.callback = callback;
-    this.images = [];
-
-    this.load = () => {
-
-        for(i = 0; i < amount; i++){
-
-            let tmpImage = new Image();
-            tmpImage.addEventListener('load', this.ackLoad);
-            tmpImage.src = this.path + id + i + '.png';
-            console.log("Loading: " + this.path + id + i + '.png');
-            this.images.push(tmpImage);
-        }       
-    
-    };
-
-    this.ackLoad = (ev) => {
-       //this.images.push(ev.target);
-        //this.amount--;
-        console.log("Loaded: " + ev.target)
-        if (this.amount === 0){
-            console.log("loades all sprites");
-            callback(this.images);
-            
-        }
-    }
-    
-
-} */
-
 function Hero(character){
 
     this.character = character;
     this.movements = this.character.movements;
     this.curMovement = 'stand';
-    this.direction = 'left';
-    this.directionY = '';
-    this.curMovementId = 'left_stand';
-    this.mathDirection = 0;
+    this.curSecondaryMovement = 'none';
+    this.curDirectionX = 'left';
+    this.curDirectionY = 'none';
+    this.curMovementId = 'stand_left';
+    this.mathDirectionX = 0;
+    this.mathDirectionY = 0;
     this.posX = 5;
     this.posY = 2;
     this.speedX = 3;
     this.index = 0;
+
+    this.shootingDuration = 500;
+    this.curShootingTime = 0;
 
     this.jumpHeight = 30;
     this.jumpDirection = 1;
@@ -95,7 +35,7 @@ function Hero(character){
 
     document.addEventListener('keydown', 
         ev => {
-
+       
             //if(!Object.keys(this.keyRegistrar).includes(ev.key)) return;
 
             if(ev.key.indexOf('Arrow') !== -1){
@@ -106,11 +46,17 @@ function Hero(character){
                     this.keyRegistrar[ev.key] = (this.keyRegistrar['ArrowLeft'] ? false: true);
                 }
 
+                if(ev.key === 'ArrowUp'){
+                    this.keyRegistrar[ev.key] = (this.keyRegistrar['ArrowDown'] ? false : true);
+                }else if(ev.key === 'ArrowDown'){
+                    this.keyRegistrar[ev.key] = (this.keyRegistrar['ArrowUp'] ? false: true);
+                }
+
             }else{
                 this.keyRegistrar[ev.key] = true;
             }
-
-        this.processKeyEvent();
+          //  this.processKeyEvent();
+   
     });
 
     document.addEventListener('keyup',
@@ -118,36 +64,48 @@ function Hero(character){
 
            // if(!Object.keys(this.keyRegistrar).includes(ev.key)) return;
             this.keyRegistrar[ev.key] = false;
-        
-            this.processKeyEvent();
+         //   this.processKeyEvent();
     });
 
-    this.processKeyEvent = function processKeyEvent(){
+    this.defineDirection = function defineDirection(){
 
-        // define direction
-        if(this.keyRegistrar['ArrowLeft'] === true) {
-            this.direction = 'left';
-            this.mathDirection = -1;
+         // define X-direction
+         if(this.keyRegistrar['ArrowLeft'] === true) {
+            this.curDirectionX = 'left';
+            this.mathDirectionX = -1;
         }else if (this.keyRegistrar['ArrowRight'] === true){
-            this.direction = 'right';
-            this.mathDirection = 1;
+            this.curDirectionX = 'right';
+            this.mathDirectionX = 1;
         }else{
-            this.mathDirection = 0;
+            // curDirectionX shall always maintain last direction
+            this.mathDirectionX = 0;
         }
-
+        
+        // define Y-direction
         if(this.keyRegistrar['ArrowUp'] === true){
-            this.direction = 'up';
+            
+            this.curDirectionY = 'up';
+            this.mathDirectionY = -1;
         }else if (this.keyRegistrar['ArrowDown'] === true){
-            this.direction = 'down';
+            this.curDirectionY = 'down';
+            this.mathDirectionY = 1;
+        }else{
+            this.curDirectionY = 'none';
+            this.mathDirectionY = 0;
         }
+    };
 
-        // interrupts
-        if((this.curMovement === 'pogojump') || (this.curMovement === 'pogofall')){
+    this.defineMovement = function defineMovement(){
+
+        // define movement-interrupts
+        if(((this.curMovement === 'pogojump') || (this.curMovement === 'pogofall')) && !this.blockPogo){
             if(this.keyRegistrar['Control'] || this.keyRegistrar['AltGraph']) this.curMovement = 'fall';
-        }
+        } 
 
         // define movement
-        if((this.curMovement !== 'fall') && (this.curMovement !== 'jump') && (this.curMovement !== 'pogojump') && (this.curMovement !== 'pogofall')){ // while falling > Keen is not controllable
+        if((this.curMovement !== 'fall') && (this.curMovement !== 'jump') 
+            && (this.curMovement !== 'pogojump') && (this.curMovement !== 'pogofall')){ // while falling > Keen is not controllable
+
             if((this.keyRegistrar['Control']) && !this.blockJump){
                 this.curMovement = 'jump';
                 this.blockJump = true;
@@ -170,27 +128,29 @@ function Hero(character){
         if((this.curMovement !== 'pogojump') && (this.curMovement !== 'pogofall')){ // keen cannot shoot while using pogo
             if(this.keyRegistrar[' '] && !this.blockShoot){
 
-
-                if(this.curMovement.indexOf('stand') !== -1){
-                    
-                }else{
-                    this.curMovement += '_shoot';
-                }
-
-                this.mathDirection = 0;
+                // defines secondary movement shoot
+                this.curSecondaryMovement = "shoot";
+                this.mathDirectionX = 0;
 
             }
         }
+    }
 
-        console.log(this.curMovement);
-        
-    this.blockJump = this.keyRegistrar['Control'];
-    this.blockPogo = this.keyRegistrar['AltGraph'];
-    this.blockShoot = this.keyRegistrar[' '];
+    this.processKeyEvent = function processKeyEvent(){
+
+        if(this.curSecondaryMovement !== 'shoot'){
+            this.defineDirection();
+            this.defineMovement();
+        }                     
+
+        this.blockJump = this.keyRegistrar['Control'];
+        this.blockPogo = this.keyRegistrar['AltGraph'];
+        this.blockShoot = this.keyRegistrar[' '];
+
     };
 
     this.moveX = () => {
-        this.posX = this.posX + (this.speedX * this.mathDirection);           
+        this.posX = this.posX + (this.speedX * this.mathDirectionX);           
     }
 
     this.moveY = () => {
@@ -205,15 +165,49 @@ function Hero(character){
         }              
     }
 
-    this.draw = (ctx) => {
-        this.curMovementId = this.direction + "_" + this.curMovement;    
-        this.index = (this.index + 1) % this.movements[this.curMovementId].amount;
+    this.getMovementId = function getMovementId(){
+
+        let returnValue = '';
+        let direction = '';
+
+        // set secondary Movement
+        if(this.curSecondaryMovement !== 'none'){
+            returnValue = this.curMovement + '_' + this.curSecondaryMovement
+        }else{
+            returnValue = this.curMovement;
+        }
+
+        // set principal direction - only consider Y-Direction while shooting and not running!
+        if((this.curSecondaryMovement === 'shoot') && (this.curMovement !== 'run')){
+            if(this.curDirectionY !== 'none'){
+                direction = this.curDirectionY;
+            }else{
+                direction = this.curDirectionX;
+            }
+        }else{
+            direction = this.curDirectionX;
+        }
+
+        return returnValue + "_" + direction;
+
+    };
+
+    this.draw = (ctx, interval) => {
+        this.curMovementId = this.getMovementId();
+
+        if(this.movements[this.curMovementId].frameInterval <= this.movements[this.curMovementId].frameDuration){
+            this.index = (this.index + 1) % this.movements[this.curMovementId].amount;
+            this.movements[this.curMovementId].frameDuration = 0;
+        }        
+        
+        this.movements[this.curMovementId].frameDuration += interval;
+
         ctx.drawImage(this.movements[this.curMovementId].sprites[this.index], this.posX, this.posY);
     }
 
-    this.calculate = () => {
+    this.calculate = (interval) => {
 
-      //  console.log('X: ' + this.posX + ' Y: ' + this.posY +  " curMovement: " + this.curMovement + ' curMovementId: ' + this.curMovementId);
+        this.processKeyEvent();
 
         // gets called repeatedly; enables self-controlled animation
         
@@ -230,6 +224,12 @@ function Hero(character){
             }   
         }
 
+        this.curShootingTime += interval;
+        if(this.curShootingTime >= this.shootingDuration){
+            this.curShootingTime = 0;
+            this.curSecondaryMovement = 'none';
+        }
+
     }
 
     this.invokeCollision = function invokeCollision(vector){
@@ -237,6 +237,7 @@ function Hero(character){
         if(vector.south.isColliding){
             if(this.curMovement === 'fall'){
                 this.curMovement = 'stand';
+                
             }else if(this.curMovement === 'pogofall'){
                 this.curMovement = 'pogojump';
             }

@@ -20,16 +20,29 @@ function SpriteLoader(level, onSuccess){
                 character.movements.forEach(
                     function iterateMovements(movement){
                         
-                        tmpMovement = new Movement(movement.id, movement.amount, movement.fileType, movement.height, movement.width);
+                        tmpMovement = new Movement(movement.id, movement.amount, movement.fileType, movement.height, movement.width, movement.reference, movement.frameInterval);
                         console.log(movement.amount);
                         for(i = 0; i < movement.amount; i++){
                             console.log(this.spritesPath + character.name + movement.id + movement.fileType);
+                            
                             let tmpImage = new Image();
                             tmpImage.addEventListener('load', this.characterSpriteLoaded);
 
                             tmpImage.addEventListener('error', (err) => {console.log(err)});
                             
-                            tmpImage.src = this.spritesPath + character.name + '_' + movement.id + i + movement.fileType;
+                            let fileId = '';
+                            if(movement.reference !== ''){
+                                fileId = movement.reference;
+                            }else{
+                                fileId = movement.id;
+                            }
+
+                            if(movement.amount <= 1){
+                                tmpImage.src = this.spritesPath + character.name + '_' + fileId + movement.fileType;
+                            }else{
+                                tmpImage.src = this.spritesPath + character.name + '_' + fileId + i + movement.fileType;
+                            }
+                            
                             tmpMovement.setSprite(i, tmpImage);                            
                         }    
                         
@@ -51,18 +64,22 @@ function SpriteLoader(level, onSuccess){
     }
 
     this.getCharacter = (characterName) => {
+        console.log(this.characters[characterName]);
         return this.characters[characterName];
     }
 }
 
-function Movement(id, amount, fileType, height, width){
+function Movement(id, amount, fileType, height, width, reference, frameInterval){
 
     this.id = id;
     this.amount = amount;
     this.fileType = fileType;
     this.height = height;
     this.width = width;
+    this.reference = reference;
     this.sprites = new Array(this.amount);
+    this.frameDuration = 0;
+    this.frameInterval = frameInterval;
 
     this.setSprite = (index, image) => {
         this.sprites[index] = image;
