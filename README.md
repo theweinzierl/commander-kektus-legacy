@@ -14,4 +14,4 @@ Zur Bearbeitung können folgenden Befehle ausgeführt werden:
     
 Der lokale Server wird mit `npm run start` ausgeführt.
 
-Als Bundler nutzen wir Parcel2.`
+Als Bundler nutzen wir Parcel2.
