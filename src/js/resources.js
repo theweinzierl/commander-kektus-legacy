@@ -25,6 +25,21 @@ game.resources = [
         "src": "data/img/background.png"
     },
     {
+        "name": "layer1",
+        "type": "image",
+        "src": "data/img/layer1.png"
+    },
+    {
+        "name": "layer2",
+        "type": "image",
+        "src": "data/img/layer2.png"
+    },
+    {
+        "name": "layer3",
+        "type": "image",
+        "src": "data/img/layer3.png"
+    },
+    {
         "name": "clouds",
         "type": "image",
         "src": "data/img/clouds.png"
@@ -40,9 +55,29 @@ game.resources = [
         "src": "data/img/map/area01_level_tiles.png"
     },
     {
+        "name": "desert_tiles",
+        "type": "image",
+        "src": "data/img/map/desert_tiles.png"
+    },
+    {
         "name": "gripe_run_right",
         "type": "image",
         "src": "data/img/sprite/gripe_run_right.png"
+    },
+    {
+        "name": "water",
+        "type": "image",
+        "src": "data/img/sprite/water.png"
+    },
+    {
+        "name": "torch",
+        "type": "image",
+        "src": "data/img/sprite/torch.png"
+    },
+    {
+        "name": "commander",
+        "type": "image",
+        "src": "data/img/sprite/commander.png"
     },
     {
         "name": "spinning_coin_gold",
@@ -63,5 +98,15 @@ game.resources = [
         "name": "area01_level_tiles",
         "type": "tsx",
         "src": "data/map/area01_level_tiles.tsx"
+    },
+    {
+        "name": "desert",
+        "type": "tmx",
+        "src": "data/map/desert.tmx"
+    },
+    {
+        "name": "desert_tiles",
+        "type": "tsx",
+        "src": "data/map/desert_tiles.tsx"
     }
 ];

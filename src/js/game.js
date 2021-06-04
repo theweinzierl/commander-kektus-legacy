@@ -13,7 +13,7 @@ export default game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(640, 480, {parent : "screen", scale : "auto", scaleMethod : "flex-width"})) {
+        if (!me.video.init(320, 240, {parent : "screen", scale : "auto", scaleMethod : "flex-width"})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
@@ -35,7 +35,10 @@ export default game = {
         me.state.set(me.state.PLAY, new game.PlayScreen());
         
         // add our player entity in the entity pool
-        me.pool.register("mainPlayer", game.PlayerEntity);
+        me.pool.register("commander", game.PlayerEntity);
+        me.pool.register("EnemyEntity", game.EnemyEntity); 
+        me.pool.register("WaterEntity", game.WaterEntity); 
+        me.pool.register("TorchEntity", game.TorchEntity); 
 
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
