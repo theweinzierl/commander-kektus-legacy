@@ -1,11 +1,6 @@
 game.resources = [
     {
-        "name": "dst-inertexponent",
-        "type": "audio",
-        "src": "data/bgm/"
-    },
-    {
-        "name": "cling",
+        "name": "walk",
         "type": "audio",
         "src": "data/sfx/"
     },
@@ -15,7 +10,22 @@ game.resources = [
         "src": "data/sfx/"
     },
     {
-        "name": "stomp",
+        "name": "die",
+        "type": "audio",
+        "src": "data/sfx/"
+    },
+    {
+        "name": "land",
+        "type": "audio",
+        "src": "data/sfx/"
+    },
+    {
+        "name": "shoot",
+        "type": "audio",
+        "src": "data/sfx/"
+    },
+    {
+        "name": "laserhit",
         "type": "audio",
         "src": "data/sfx/"
     },
@@ -70,6 +80,11 @@ game.resources = [
         "src": "data/img/sprite/water.png"
     },
     {
+        "name": "laserblast",
+        "type": "image",
+        "src": "data/img/sprite/laserblast.png"
+    },
+    {
         "name": "torch",
         "type": "image",
         "src": "data/img/sprite/torch.png"
@@ -78,6 +93,11 @@ game.resources = [
         "name": "commander",
         "type": "image",
         "src": "data/img/sprite/commander.png"
+    },
+    {
+        "name": "bloog",
+        "type": "image",
+        "src": "data/img/sprite/bloog.png"
     },
     {
         "name": "spinning_coin_gold",
