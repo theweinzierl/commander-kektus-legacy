@@ -100,6 +100,16 @@ game.resources = [
         "src": "data/img/sprite/bloog.png"
     },
     {
+        "name": "kektus",
+        "type": "image",
+        "src": "data/img/sprite/kektus.png"
+    },
+    {
+        "name": "slug",
+        "type": "image",
+        "src": "data/img/sprite/slug.png"
+    },
+    {
         "name": "spinning_coin_gold",
         "type": "image",
         "src": "data/img/sprite/spinning_coin_gold.png"

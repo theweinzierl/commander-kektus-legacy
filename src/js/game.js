@@ -42,6 +42,8 @@ export default game = {
         me.pool.register("wall", game.wall);
 
         me.pool.register("Bloog", game.Bloog);
+        me.pool.register("Slug", game.Slug);
+        me.pool.register("Kektus", game.Kektus);
 
 
         me.input.bindKey(me.input.KEY.LEFT, "left");
