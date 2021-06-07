@@ -7,12 +7,10 @@ Commander-Kektus ist ein kleines Jump&Run, welches die melon.js-Engine einsetzt.
 Ein aktueller Build kann hier aufgerufen werden: 
 https://theweinzierl.github.io/commander-kektus/
 
-Zur Nutzung müssen folgenden Befehle ausgeführt werden:
-```zsh
-git clone https://github.com/theweinzierl/commander-kektus
-
-cd commander-kektus
-
+Zur Nutzung muss folgender Befehl ausgeführt werden:
+```shell
+git clone https://github.com/theweinzierl/commander-kektus && \
+cd commander-kektus && \
 npm install
 ```
 
