@@ -40,6 +40,8 @@ game.PlayerEntity = me.Entity.extend({
         this.renderable.addAnimation("shoot_jump_right", [20], 120);
         this.renderable.addAnimation("shoot_jump_left", [15], 120);
 
+        this.renderable.addAnimation("surf", [29]);
+
         this.renderable.addAnimation("die", [25, 26], 300);
 
         this.renderable.setCurrentAnimation("stand_right");
@@ -56,6 +58,8 @@ game.PlayerEntity = me.Entity.extend({
         this.shooting = false;
         this.dead = false;
         this.landing = false;
+        this.platforming = false;
+        this.platformingForce = 0;
 
         if (game.commander !== null) {
             game.commander = this;
@@ -77,7 +81,6 @@ game.PlayerEntity = me.Entity.extend({
             return (this._super(me.Entity, 'update', [dt]));
         }
 
-
         if (me.input.isKeyPressed('right')) {
             this.body.force.x = this.body.maxVel.x;
             this.walkRight = true;
@@ -94,16 +97,23 @@ game.PlayerEntity = me.Entity.extend({
             }
 
         } else {
-            this.body.force.x = 0;
-            if (this.walkRight) {
-                if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_right")) {
-                    this.renderable.setCurrentAnimation("stand_right");
+            
+
+            if(this.platforming){
+                this.body.force.x = 0; // what to do?
+                this.renderable.setCurrentAnimation("surf");
+            }else{
+                this.body.force.x = 0;
+                if (this.walkRight) {
+                    if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_right")) {
+                        this.renderable.setCurrentAnimation("stand_right");
+                    }
+                } else {
+                    if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_left")) {
+                        this.renderable.setCurrentAnimation("stand_left");
+                    }
                 }
-            } else {
-                if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_left")) {
-                    this.renderable.setCurrentAnimation("stand_left");
-                }
-            }
+            }   
         }
 
         if (me.input.isKeyPressed('jump')) {
@@ -193,6 +203,13 @@ game.PlayerEntity = me.Entity.extend({
                 if (this.landing) {
                     this.landing = false;
                     me.audio.play("land");
+                }
+
+                if(other.type === "platform"){
+                    this.platforming = true;
+                    this.platformingForce = other;
+                }else{
+                    this.platforming = false;
                 }
 
                 return true;
@@ -360,6 +377,60 @@ game.LaserBlast = me.Entity.extend({
 
 game.LaserBlast.direction = 0;
 game.collided = false;
+
+
+
+game.Platform = me.Sprite.extend(
+    {
+        init: function (x, y, settings) {
+
+            let areaWidth = settings.width;
+
+            settings.image = "platform";
+            settings.framewidth = settings.width = 48;
+            settings.frameheight = settings.height = 16;
+
+            this._super(me.Sprite, 'init', [x, y, settings]);
+
+            this.body = new me.Body(this);
+            this.body.addShape(new me.Rect(0, 8, settings.framewidth, settings.frameheight));
+
+            this.body.setMaxVelocity(1, 0);
+            this.body.setFriction(0, 0);
+            this.isKinematic = false;
+            this.alwaysUpdate = true;
+            this.startX = this.pos.x;
+            this.endX = this.startX + areaWidth - this.width;
+
+            this.walkRight = false;
+
+           this.body.collisionType = me.collision.types.WORLD_SHAPE;
+            this.type = "platform";
+
+        },
+
+        update: function (dt) {
+                if (!this.walkRight && this.pos.x <= this.startX) {
+                    this.walkRight = true;
+                    this.body.force.x = this.body.maxVel.x;
+                    console.log(this.body.vel.x);
+                }
+                else if (this.walkRight && this.pos.x >= this.endX) {
+                    this.walkRight = false;
+                    this.body.force.x = -this.body.maxVel.x;
+                }
+
+            this.body.update(dt);
+
+            return (this._super(me.Sprite, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+        },
+
+
+    onCollision: function (response, other) {
+
+        return false;
+    }
+    });
 
 /**
 * an enemy Entity

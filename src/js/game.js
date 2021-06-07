@@ -38,9 +38,11 @@ export default game = {
         me.pool.register("Commander", game.PlayerEntity);
         me.pool.register("Water", game.Water); 
         me.pool.register("Torch", game.Torch); 
+        me.pool.register("Platform", game.Platform);
         me.pool.register("LaserBlast", game.LaserBlast);
         me.pool.register("wall", game.wall);
 
+        
         me.pool.register("Bloog", game.Bloog);
         me.pool.register("Slug", game.Slug);
         me.pool.register("Kektus", game.Kektus);

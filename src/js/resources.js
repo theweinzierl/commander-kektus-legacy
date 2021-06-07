@@ -90,6 +90,11 @@ game.resources = [
         "src": "data/img/sprite/torch.png"
     },
     {
+        "name": "platform",
+        "type": "image",
+        "src": "data/img/sprite/platform.png"
+    },
+    {
         "name": "commander",
         "type": "image",
         "src": "data/img/sprite/commander.png"
