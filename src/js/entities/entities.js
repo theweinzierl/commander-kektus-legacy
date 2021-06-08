@@ -704,6 +704,7 @@ game.Slug = me.Sprite.extend(
                     if(this.awaken === 300){
                         this.sleeping = false;
                         this.setCurrentAnimation("attack");
+                        this.shoot();
                     }
                 }
 
