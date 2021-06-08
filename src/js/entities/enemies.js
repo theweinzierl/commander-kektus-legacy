@@ -217,15 +217,15 @@ game.Kektus = me.Sprite.extend({
             if (i <= 3) {
                 directionX = 1;
                 directionY = -1;
-            } else if (i <= 5) {
+            } else if (i <= 7) {
                 directionX = 1;
                 directionY = 1;
-            } else if (i <= 9) {
+            } else if (i <= 11) {
                 directionX = -1;
                 directionY = 1;
-            } else if (i <= 13) {
-                directionX = 1;
-                directionY - 1;
+            } else if (i <= 15) {
+                directionX = -1;
+                directionY = -1;
             }
 
             me.audio.play("kektusshoot");

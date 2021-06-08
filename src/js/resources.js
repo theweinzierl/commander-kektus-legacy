@@ -35,11 +35,6 @@ game.resources = [
         "src": "data/sfx/"
     },
     {
-        "name": "background",
-        "type": "image",
-        "src": "data/img/background.png"
-    },
-    {
         "name": "layer1",
         "type": "image",
         "src": "data/img/layer1.png"
@@ -60,24 +55,9 @@ game.resources = [
         "src": "data/img/clouds.png"
     },
     {
-        "name": "title_screen",
-        "type": "image",
-        "src": "data/img/gui/title_screen.png"
-    },
-    {
-        "name": "area01_level_tiles",
-        "type": "image",
-        "src": "data/img/map/area01_level_tiles.png"
-    },
-    {
         "name": "desert_tiles",
         "type": "image",
         "src": "data/img/map/desert_tiles.png"
-    },
-    {
-        "name": "gripe_run_right",
-        "type": "image",
-        "src": "data/img/sprite/gripe_run_right.png"
     },
     {
         "name": "water",
@@ -123,26 +103,6 @@ game.resources = [
         "name": "slug",
         "type": "image",
         "src": "data/img/sprite/slug.png"
-    },
-    {
-        "name": "spinning_coin_gold",
-        "type": "image",
-        "src": "data/img/sprite/spinning_coin_gold.png"
-    },
-    {
-        "name": "wheelie_right",
-        "type": "image",
-        "src": "data/img/sprite/wheelie_right.png"
-    },
-    {
-        "name": "area01",
-        "type": "tmx",
-        "src": "data/map/area01.tmx"
-    },
-    {
-        "name": "area01_level_tiles",
-        "type": "tsx",
-        "src": "data/map/area01_level_tiles.tsx"
     },
     {
         "name": "desert",
