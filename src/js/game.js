@@ -26,7 +26,6 @@ export default game = {
         
         
         me.loader.preload(game.resources, this.loaded.bind(this));
-        console.log(game.resources);
     },
 
     // Run on game resources loaded.
@@ -37,15 +36,19 @@ export default game = {
         // add our player entity in the entity pool
         me.pool.register("Commander", game.PlayerEntity);
         me.pool.register("Water", game.Water); 
+        me.pool.register("Thorn", game.Thorn); 
         me.pool.register("Torch", game.Torch); 
         me.pool.register("Platform", game.Platform);
         me.pool.register("LaserBlast", game.LaserBlast);
+        me.pool.register("KektusThorn", game.KektusThorn);
         me.pool.register("wall", game.wall);
+
 
         
         me.pool.register("Bloog", game.Bloog);
         me.pool.register("Slug", game.Slug);
         me.pool.register("Kektus", game.Kektus);
+        me.pool.register("Mushroom", game.Mushroom);
 
 
         me.input.bindKey(me.input.KEY.LEFT, "left");

@@ -25,6 +25,11 @@ game.resources = [
         "src": "data/sfx/"
     },
     {
+        "name": "kektusshoot",
+        "type": "audio",
+        "src": "data/sfx/"
+    },
+    {
         "name": "laserhit",
         "type": "audio",
         "src": "data/sfx/"
@@ -103,6 +108,11 @@ game.resources = [
         "name": "bloog",
         "type": "image",
         "src": "data/img/sprite/bloog.png"
+    },
+    {
+        "name": "mushroom",
+        "type": "image",
+        "src": "data/img/sprite/mushroom.png"
     },
     {
         "name": "kektus",

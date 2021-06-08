@@ -1,5 +1,4 @@
 
-
 /**
  * Player Entity
  */
@@ -42,7 +41,7 @@ game.PlayerEntity = me.Entity.extend({
 
         this.renderable.addAnimation("surf", [29]);
 
-        this.renderable.addAnimation("die", [25, 26], 300);
+        this.renderable.addAnimation("die", [25, 26], 200);
 
         this.renderable.setCurrentAnimation("stand_right");
 
@@ -71,7 +70,7 @@ game.PlayerEntity = me.Entity.extend({
      * update the entity
      */
     update: function (dt) {
-
+       
         if (this.dead) {
             this.body.update(dt);
             return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
@@ -214,17 +213,14 @@ game.PlayerEntity = me.Entity.extend({
 
                 return true;
             case me.collision.types.ENEMY_OBJECT:
-
-                if (!(other.type === 'monster') || other.alive) {
-                    this.dead = true;
-                    this.renderable.setCurrentAnimation("die");
-                    this.body.vel.y = -200;
-                    this.body.force.x = 0;
-                    me.audio.play("die");
+                if (!(other.type === 'monster') || other.alive && !this.dead) {
+                    this.die();
                 }
-
                 return false;
             case me.collision.types.PROJECTILE_OBJECT:
+                if(other.type !== "laserblast"){
+                    this.die();
+                }
                 return false;
             default:
                 // Do not respond to other objects (e.g. coins)
@@ -233,6 +229,14 @@ game.PlayerEntity = me.Entity.extend({
 
         // Make the object solid
         return true;
+    },
+
+    die: function(){
+        this.dead = true;
+        this.renderable.setCurrentAnimation("die");
+        this.body.vel.y = -200;
+        this.body.force.x = 0;
+        me.audio.play("die");
     }
 
 });
@@ -255,6 +259,19 @@ game.Water = me.Entity.extend({
     onCollision: function (response, other) {
 
 
+        return false
+    }
+});
+
+
+ game.Thorn = me.Entity.extend({
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y, settings]);
+        this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+        this.type = "obstacle";
+    },
+
+    onCollision: function (response, other) {
         return false
     }
 });
@@ -322,7 +339,7 @@ game.LaserBlast = me.Entity.extend({
 
         this.renderable.setCurrentAnimation("shoot");
 
-        this.type = "buuum";
+        this.type = "laserblast";
         this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
         this.body.update();
 
@@ -330,17 +347,19 @@ game.LaserBlast = me.Entity.extend({
 
 
     update: function (dt) {
+        let bounds = me.game.viewport.getBounds();
+       
         if (!this.collided) {
             this.body.force.x = this.body.maxVel.x * this.direction;
             me.collision.check(this);
         }
 
-        if ((this.pos.y + this.height <= 0)
-            || (this.pos.y + this.height >= game.height)
-            || (this.pos.x + this.width <= 0)
-            || (this.pos.x + this.width >= game.width)) {
+        if ((this.pos.y <= bounds.pos.y)
+            || (this.pos.y + this.height >= bounds.pos.y + bounds.height)
+            || (this.pos.x + this.width <= bounds.pos.x)
+            || (this.pos.x + this.width >= bounds.pos.x + bounds.width)) {
 
-            // me.game.world.removeChild(this);
+            me.game.world.removeChild(this);
         }
 
         this.body.update();
@@ -349,7 +368,8 @@ game.LaserBlast = me.Entity.extend({
     },
 
     onCollision: function (response, other) {
-        console.log(other.type);
+        if (this.collided) return false;
+
         if (other.body.collisionType !== me.collision.types.PLAYER_OBJECT) {
             this.body.setMaxVelocity(0, 0);
 
@@ -413,7 +433,6 @@ game.Platform = me.Sprite.extend(
                 if (!this.walkRight && this.pos.x <= this.startX) {
                     this.walkRight = true;
                     this.body.force.x = this.body.maxVel.x;
-                    console.log(this.body.vel.x);
                 }
                 else if (this.walkRight && this.pos.x >= this.endX) {
                     this.walkRight = false;
@@ -661,19 +680,40 @@ game.Slug = me.Sprite.extend(
                 // to remember which side we were walking
                 this.walkRight = false;
     
+                this.alwaysUpdate = true;
                 // make it "alive"
                 this.alive = true;
+                this.awaken = 0;
+                this.sleeping = true;
     
                 this.addAnimation("sleep", [0, 1], 300);
-                this.addAnimation("dead", [2]);
+                this.addAnimation("dead", [7, 8], 300);
+                this.addAnimation("attack", [3, 4, 5, 6], 300);
                 this.setCurrentAnimation("sleep");
     
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 this.type = "monster";
+                this.shootRepition = 0;
             },
     
             // manage the enemy movement
             update: function (dt) {
+                
+                if(this.awaken > 0 && this.sleeping){
+                    this.awaken++;
+                    if(this.awaken === 300){
+                        this.sleeping = false;
+                        this.setCurrentAnimation("attack");
+                    }
+                }
+
+                if(!this.sleeping && this.alive){
+                    this.shootRepition++;
+                    if(this.shootRepition === 150){
+                        this.shootRepition = 0;
+                        this.shoot();
+                    }
+                }
 
                 // check & update movement
                 this.body.update(dt);
@@ -684,15 +724,46 @@ game.Slug = me.Sprite.extend(
                 // return true if we moved or if the renderable was updated
                 return (this._super(me.Sprite, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
-    
-            /**
-             * colision handler
-             * (called when colliding with other objects)
-             */
+
+            shoot: function(){
+
+                let m = [2, 1.5, 1, 0.5, 0, 0.5, 1, 1.5, 2, 1.5, 1, 0.5, 0 ,0.5, 1, 1.5, 2];
+                let directionX, directionY = 0;
+
+                let posX = this.pos.x + this.width / 2;
+                let posY = this.pos.y + this.height / 2;
+
+                for(let i = 0; i < 16; i++){
+                    if(i <= 2){
+                        directionX = 1;
+                        directionY = -1;
+                    }else if(i <= 5){
+                        directionX = 1;
+                        directionY = 1;
+                    }else if(i <= 8){
+                        directionX = -1;
+                        directionY = 1;
+                    }else if(i <= 11){
+                        directionX = 1;
+                        directionY -1;
+                    }
+
+                    //console.log("kektus-shoot: " + posX + " " +  posY + " " + directionX + " " + directionY);
+                    me.audio.play("kektusshoot");
+                    me.game.world.addChild(me.pool.pull("KektusThorn", posX, posY, directionX, directionY, m[i]));
+                }
+
+            },
+
             onCollision: function (response, other) {
-                if (this.alive && (other.body.collisionType === me.collision.types.PROJECTILE_OBJECT)) {
-                    this.alive = false;
-                    this.setCurrentAnimation("dead");
+                if (this.alive && !this.sleeping && (other.body.collisionType === me.collision.types.PROJECTILE_OBJECT)) {
+                    if(other.type !== "kektusthorn"){
+                        this.alive = false;
+                        this.setCurrentAnimation("dead");
+                        return false;
+                    }else{
+                        return false;
+                    }
                 } else if (other.body.collisionType === me.collision.types.ENEMY_OBJECT) {
                     return false;
                 } else if (other.body.collisionType === me.collision.types.PLAYER_OBJECT) {
@@ -700,5 +771,184 @@ game.Slug = me.Sprite.extend(
                 }
                 // Make all other objects solid
                 return true;
+            },
+
+            onVisibilityChange: function(){
+                if(this.awaken === 0) this.awaken = 1;
             }
         });
+
+
+        game.Mushroom = me.Sprite.extend(
+            {
+                init: function (x, y, settings) {
+                    
+                    var areaHeight = settings.height;
+        
+                    // define this here instead of tiled
+                    settings.image = "mushroom";
+        
+                    // adjust the size setting information to match the sprite size
+                    // so that the entity object is created with the right size
+                    settings.framewidth = settings.width = 32;
+                    settings.frameheight = settings.height = 32;
+        
+                    // call the parent constructor
+                    this._super(me.Sprite, 'init', [x, y, settings]);
+        
+                    // add a physic body
+                    this.body = new me.Body(this);
+                    // add a default collision shape
+                    this.body.addShape(new me.Rect(0, 0, settings.framewidth, settings.frameheight));
+        
+                    // configure max speed and friction
+                    this.body.setMaxVelocity(0, 2.5);
+                    this.body.setFriction(0.4, 0);
+                    // enable physic collision (off by default for basic me.Renderable)
+                    this.isKinematic = false;
+        
+                    this.startY = this.pos.y + areaHeight - this.height;
+                    this.endY = this.pos.y;
+                    this.pos.y = this.startY;
+        
+                    // to remember which side we were walking
+                    this.jumpUp = false;
+        
+                    // make it "alive"
+                    this.alive = true;
+
+                    this.addAnimation("jump_left", [0, 1]);
+                    this.addAnimation("jump_right", [2, 3]);
+                    this.setCurrentAnimation("jump_left");
+        
+                    this.animationpause = true;
+        
+                    this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+                    this.type = "monster";
+                },
+        
+                // manage the enemy movement
+                update: function (dt) {
+                    
+                    if(this.alive){
+                        if(this.jumpUp && this.pos.y <= this.endY){
+                            this.body.force.y = this.body.maxVel.y;
+                            this.jumpUp = false;
+                            this.setAnimationFrame((this.getCurrentAnimationFrame() + 1) % 2);
+                        }else if(!this.jumpUp && this.pos.y >= this.startY){
+                            this.body.force.y = -this.body.maxVel.y;
+                            this.jumpUp = true;
+                            this.setAnimationFrame((this.getCurrentAnimationFrame() + 1) % 2);
+                        }
+                       
+                    }else{
+                        this.body.force.y = 0;                      
+                    }
+
+                    me.collision.check(this);
+                    // check & update movement
+                    this.body.update(dt);
+        
+                    // return true if we moved or if the renderable was updated
+                    return (this._super(me.Sprite, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+                },
+        
+                onCollision: function (response, other) {
+                       
+                    if (this.alive && other.body.collisionType === me.collision.types.PROJECTILE_OBJECT) {
+                        this.alive = false;
+                        this.setAnimationFrame();
+                    }
+
+                    if(other.body.collisionType === me.collision.types.WORLD_SHAPE){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            });
+
+
+game.KektusThorn = me.Entity.extend({
+    init: function (x, y, directionX, directionY, m) {
+
+        let settings = {
+            image: 'laserblast',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
+
+        this._super(me.Entity, 'init', [x, y, settings]);
+
+        this.directionX = directionX;
+        this.directionY = directionY;
+        this.body.setMaxVelocity(3, 3 * m);
+        this.alwaysUpdate = true;
+
+        this.renderable.addAnimation("shoot", [0, 1, 2, 3, 4]);
+        this.renderable.addAnimation("explode", [5], 100);
+
+        this.renderable.setCurrentAnimation("shoot");
+
+        this.borderRight = x + game.width * 2;
+        this.borderLeft = x - game.width * 2;
+        this.borderTop = y - game.height;
+        this.borderBottom = y + game.height;
+
+        this.type = "kektusthorn";
+        this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
+        this.body.update();
+
+    },
+
+
+    update: function (dt) {
+        let bounds = me.game.world.getBounds();
+
+        if (!this.collided) {
+            this.body.force.x = this.body.maxVel.x * this.directionX;
+            this.body.force.y = this.body.maxVel.y * this.directionY;
+            me.collision.check(this);
+        }
+
+        if ((this.pos.y + this.height <= 0)
+            || (this.pos.y >= bounds.height)
+            || (this.pos.x + this.width <= 0)
+            || (this.pos.x >= bounds.width)) {
+
+                me.game.world.removeChild(this);
+        }
+
+        this.body.update();
+
+        return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+    },
+
+    onCollision: function (response, other) {
+        if (this.collided) return false;
+
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT) {
+            this.body.setMaxVelocity(0, 0);
+            me.audio.stop();
+            me.audio.play("laserhit");
+
+            this.renderable.setCurrentAnimation("explode", function () {
+                console.log("wasted");
+                me.game.world.removeChild(this);
+                return false
+            }.bind(this));
+
+            // this.body.force.x = 0;
+            this.collided = true;
+
+
+
+
+            return false;
+        } else {
+            return false;
+        }
+    },
+
+});
