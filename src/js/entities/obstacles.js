@@ -1,0 +1,92 @@
+game.Water = me.Entity.extend({
+
+    init: function (x, y, settings) {
+        // image was already defined in tiled
+        this._super(me.Entity, 'init', [x, y, settings]);
+        this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+        this.type = "obstacle";
+    },
+
+    onCollision: function (response, other) {
+        return false
+    }
+});
+
+
+game.Thorn = me.Entity.extend({
+    init: function (x, y, settings) {
+        // image is implemented as tile in tiled
+        this._super(me.Entity, 'init', [x, y, settings]);
+        this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+        this.type = "obstacle";
+    },
+
+    onCollision: function (response, other) {
+        return false
+    }
+});
+
+
+
+game.Torch = me.Entity.extend({
+
+    init: function (x, y, settings) {
+        this._super(me.Entity, 'init', [x, y, settings]);
+        this.body.collisionType = me.collision.types.NO_OBJECT;
+    },
+
+    onCollision: function (response, other) {
+        return false
+    }
+});
+
+game.Platform = me.Sprite.extend(
+    {
+        init: function (x, y, settings) {
+
+            let areaWidth = settings.width;
+
+            settings.image = "platform";
+            settings.framewidth = settings.width = 48;
+            settings.frameheight = settings.height = 16;
+
+            this._super(me.Sprite, 'init', [x, y, settings]);
+
+            this.body = new me.Body(this);
+            this.body.addShape(new me.Rect(0, 8, settings.framewidth, settings.frameheight));
+            this.body.setMaxVelocity(1, 0);
+            this.body.setFriction(0, 0);
+
+            this.isKinematic = false;
+            this.alwaysUpdate = true;
+
+            this.startX = this.pos.x;
+            this.endX = this.startX + areaWidth - this.width;
+
+            this.walkRight = false;
+
+            this.body.collisionType = me.collision.types.WORLD_SHAPE;
+            this.type = "platform";
+
+        },
+
+        update: function (dt) {
+                if (!this.walkRight && this.pos.x <= this.startX) {
+                    this.walkRight = true;
+                    this.body.force.x = this.body.maxVel.x;
+                }
+                else if (this.walkRight && this.pos.x >= this.endX) {
+                    this.walkRight = false;
+                    this.body.force.x = -this.body.maxVel.x;
+                }
+
+            this.body.update(dt);
+
+            return (this._super(me.Sprite, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+        },
+
+
+    onCollision: function (response, other) {
+        return false;
+    }
+    });

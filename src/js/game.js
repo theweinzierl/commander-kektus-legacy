@@ -40,11 +40,7 @@ export default game = {
         me.pool.register("Torch", game.Torch); 
         me.pool.register("Platform", game.Platform);
         me.pool.register("LaserBlast", game.LaserBlast);
-        me.pool.register("KektusThorn", game.KektusThorn);
-        me.pool.register("wall", game.wall);
-
-
-        
+        me.pool.register("KektusThorn", game.KektusThorn);        
         me.pool.register("Bloog", game.Bloog);
         me.pool.register("Slug", game.Slug);
         me.pool.register("Kektus", game.Kektus);
@@ -58,10 +54,5 @@ export default game = {
     
         // Start the game.
         me.state.change(me.state.PLAY);
-    },
-
-    commander: null, // reference to el comandante!
-
-    height: 240,
-    width: 320
+    }
 };
