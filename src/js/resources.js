@@ -10,6 +10,11 @@ game.resources = [
         "src": "data/sfx/"
     },
     {
+        "name": "win",
+        "type": "audio",
+        "src": "data/sfx/"
+    },
+    {
         "name": "die",
         "type": "audio",
         "src": "data/sfx/"
@@ -70,6 +75,11 @@ game.resources = [
         "src": "data/img/sprite/laserblast.png"
     },
     {
+        "name": "neuralblast",
+        "type": "image",
+        "src": "data/img/sprite/neuralblast.png"
+    },
+    {
         "name": "torch",
         "type": "image",
         "src": "data/img/sprite/torch.png"
@@ -83,6 +93,11 @@ game.resources = [
         "name": "commander",
         "type": "image",
         "src": "data/img/sprite/commander.png"
+    },
+    {
+        "name": "flag",
+        "type": "image",
+        "src": "data/img/sprite/flag.png"
     },
     {
         "name": "bloog",

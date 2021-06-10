@@ -90,3 +90,26 @@ game.Platform = me.Sprite.extend(
         return false;
     }
     });
+
+game.LevelEntity = me.LevelEntity.extend({
+    init: function (x, y, settings) {
+
+        this._super(me.LevelEntity, 'init', [x, y, settings]);
+
+        this.win = false;
+    },
+
+    onCollision: function (response, other) {
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT) {
+            if(!this.win) me.audio.play("win");
+            this.win = true;
+            window.setTimeout(
+                function () {
+                    this.goTo("desert");                   
+                }.bind(this), 3000
+            );
+        }
+        return false;
+    }
+
+});

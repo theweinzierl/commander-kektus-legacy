@@ -205,6 +205,7 @@ game.PlayerEntity = me.Entity.extend({
         this.body.vel.y = -200;
         this.body.force.x = 0;
         me.audio.play("die");
+        window.setTimeout(() => me.levelDirector.reloadLevel(), 2000);
     }
 
 });
@@ -214,7 +215,7 @@ game.LaserBlast = me.Entity.extend({
     init: function (x, y, direction) {
 
         let settings = {
-            image: 'laserblast',
+            image: 'neuralblast',
             width: 16,
             height: 16,
             framewidth: 16

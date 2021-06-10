@@ -207,23 +207,23 @@ game.Kektus = me.Sprite.extend({
 
     shoot: function () {
 
-        let m = [2, 1.5, 1, 0.5, 0, 0.5, 1, 1.5, 2, 1.5, 1, 0.5, 0, 0.5, 1, 1.5, 2];
+        let m = [2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
         let directionX, directionY = 0;
 
         let posX = this.pos.x + this.width / 2;
         let posY = this.pos.y + this.height / 2;
 
-        for (let i = 0; i < 16; i++) {
-            if (i <= 3) {
+        for (let i = 0; i < 33; i++) {
+            if (i <= 7) {
                 directionX = 1;
                 directionY = -1;
-            } else if (i <= 7) {
+            } else if (i <= 15) {
                 directionX = 1;
                 directionY = 1;
-            } else if (i <= 11) {
+            } else if (i <= 23) {
                 directionX = -1;
                 directionY = 1;
-            } else if (i <= 15) {
+            } else if (i <= 32) {
                 directionX = -1;
                 directionY = -1;
             }

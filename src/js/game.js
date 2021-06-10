@@ -45,7 +45,7 @@ export default game = {
         me.pool.register("Slug", game.Slug);
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
-
+        me.pool.register("LevelEntity", game.LevelEntity);
 
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
