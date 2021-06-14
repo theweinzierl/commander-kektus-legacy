@@ -1,4 +1,5 @@
-import me from "melonjs";
+import NetCommunicator from "./NetCommunicator";
+
 
 /* Game namespace */
 export default game = {
@@ -54,5 +55,24 @@ export default game = {
     
         // Start the game.
         me.state.change(me.state.PLAY);
+
+        this.netCom = new NetCommunicator();
+        this.netCom.connect();
+        this.netCom.onUpdate = this.onGameDataReceived.bind(this);
+    },
+
+    netCom: null,
+
+    commander:  null,
+
+    onGameDataReceived: function(data){
+        console.log(data);
+        this.commander.pos.x = data.x;
+
+    },
+
+    sendGameData(){
+       if (this.netCom === null) return;
+       if(this.commander !== null) this.netCom.exchangeGameData({x: this.commander.pos.x, y: this.commander.pos.y});
     }
 };

@@ -40,9 +40,13 @@ game.PlayerEntity = me.Entity.extend({
         this.platforming = false;
         this.platformingForce = 0;
 
+        game.commander = this;
+
     },
 
     update: function (dt) {
+
+        
        
         if (this.dead) {
             this.body.update(dt);
@@ -57,6 +61,8 @@ game.PlayerEntity = me.Entity.extend({
         if (me.input.isKeyPressed('right')) {
             this.body.force.x = this.body.maxVel.x;
             this.walkRight = true;
+           
+            game.sendGameData();
 
             if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("walk_right")) {
                 this.renderable.setCurrentAnimation("walk_right", () => me.audio.play("walk"));
@@ -243,6 +249,8 @@ game.LaserBlast = me.Entity.extend({
     update: function (dt) {
         let bounds = me.game.viewport.getBounds();
        
+        game.sendGameData();
+
         if (!this.collided) {
             this.body.force.x = this.body.maxVel.x * this.direction;
             me.collision.check(this); // don't call collision.check once the blast collided because this will abort callback of explode-animation
