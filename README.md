@@ -16,10 +16,10 @@ Schießen: Leertaste
 
 ### Frontend und Spiellogik
 
-Engine: melon.js (https://www.melonjs.org/)
-Frontend: angular.js
-Netzwerk: websocket-API (https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
-Bundler: Parcel2 (https://v2.parceljs.org/)
+- Engine: melon.js (https://www.melonjs.org/)
+- Frontend: angular.js
+- Netzwerk: websocket-API (https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- Bundler: Parcel2 (https://v2.parceljs.org/)
 
 Installation/ Nutzung
 ```shell
