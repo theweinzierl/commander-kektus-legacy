@@ -8,9 +8,9 @@ Commander Kektus ist ein Mini-Jump&Run und eine kleine Hommage an Commander Keen
 https://theweinzierl.github.io/commander-kektus/
 
 ### Steuerung
-Links/ Rechts: Cursor-Taste links/ rechts
-Springen: Cursor-Taste hoch
-Schießen: Leertaste
+- Links/ Rechts: Cursor-Taste links/ rechts
+- Springen: Cursor-Taste hoch
+- Schießen: Leertaste
 
 ## technische Aspekte
 
