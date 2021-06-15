@@ -1,5 +1,3 @@
-import NetCommunicator from "./NetCommunicator";
-
 
 /* Game namespace */
 export default game = {
@@ -10,6 +8,7 @@ export default game = {
         score : 0
     },
 
+    mode: null,
 
     // Run on page load.
     "onload" : function () {
@@ -48,6 +47,8 @@ export default game = {
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
 
+        if(this.mode === "multiplayer") me.pool.register("Retep", game.Retep);
+
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP, "jump", true);
@@ -56,23 +57,30 @@ export default game = {
         // Start the game.
         me.state.change(me.state.PLAY);
 
-        this.netCom = new NetCommunicator();
-        this.netCom.connect();
-        this.netCom.onUpdate = this.onGameDataReceived.bind(this);
     },
 
     netCom: null,
 
     commander:  null,
 
-    onGameDataReceived: function(data){
-        console.log(data);
-        this.commander.pos.x = data.x;
+    retep: null,
 
+    onGameDataReceived: function(data){
+        //console.log(data);
+        if(data !== undefined && data.entity === "retep"){
+            this.retep.pos.x = data.posX;
+            this.retep.pos.y = data.posY;
+            this.retep.setCurrentAnimation(data.currentAnimation);
+        }
     },
 
-    sendGameData(){
-       if (this.netCom === null) return;
-       if(this.commander !== null) this.netCom.exchangeGameData({x: this.commander.pos.x, y: this.commander.pos.y});
+    sendGameData(data){
+       if(this.netCom === null) return;
+       if(this.retep !== null) this.netCom.exchangeGameData(data);
+    },
+
+    setNetCom(netCom){
+        netCom.onUpdate = this.onGameDataReceived.bind(this);
+        this.netCom = netCom;
     }
 };

@@ -39,6 +39,7 @@ game.PlayerEntity = me.Entity.extend({
         this.landing = false;
         this.platforming = false;
         this.platformingForce = 0;
+        this.curAnimation = "stand_right";
 
         game.commander = this;
 
@@ -46,7 +47,7 @@ game.PlayerEntity = me.Entity.extend({
 
     update: function (dt) {
 
-        
+        if(game.mode === "multiplayer") game.sendGameData({entity: "retep", posX: this.pos.x, posY: this.pos.y, currentAnimation: this.curAnimation});
        
         if (this.dead) {
             this.body.update(dt);
@@ -61,11 +62,10 @@ game.PlayerEntity = me.Entity.extend({
         if (me.input.isKeyPressed('right')) {
             this.body.force.x = this.body.maxVel.x;
             this.walkRight = true;
-           
-            game.sendGameData();
 
             if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("walk_right")) {
                 this.renderable.setCurrentAnimation("walk_right", () => me.audio.play("walk"));
+                this.curAnimation = "walk_right";
             }
         } else if (me.input.isKeyPressed('left')) {
             this.body.force.x = -this.body.maxVel.x;
@@ -73,6 +73,7 @@ game.PlayerEntity = me.Entity.extend({
 
             if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("walk_left")) {
                 this.renderable.setCurrentAnimation("walk_left", () => me.audio.play("walk"));
+                this.curAnimation = "walk_left";
             }
         } else {
             
@@ -81,15 +82,18 @@ game.PlayerEntity = me.Entity.extend({
             if(this.platforming){
                 this.body.force.x = 0;
                 this.renderable.setCurrentAnimation("surf");
+                this.curAnimation = "surf";
             }else{
                 this.body.force.x = 0;
                 if (this.walkRight) {
                     if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_right")) {
                         this.renderable.setCurrentAnimation("stand_right");
+                        this.curAnimation = "stand_right";
                     }
                 } else {
                     if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_left")) {
                         this.renderable.setCurrentAnimation("stand_left");
+                        this.curAnimation = "stand_left";
                     }
                 }
             }   
@@ -113,10 +117,12 @@ game.PlayerEntity = me.Entity.extend({
             if (this.walkRight) {
                 if (!this.renderable.isCurrentAnimation("fall_right")) {
                     this.renderable.setCurrentAnimation("fall_right");
+                    this.curAnimation = "fall_right";
                 }
             } else {
                 if (!this.renderable.isCurrentAnimation("fall_left")) {
                     this.renderable.setCurrentAnimation("fall_left");
+                    this.curAnimation = "fall_left";
                 }
             }
         } else if (this.body.jumping) {
@@ -124,10 +130,12 @@ game.PlayerEntity = me.Entity.extend({
             if (this.walkRight) {
                 if (!this.renderable.isCurrentAnimation("jump_right")) {
                     this.renderable.setCurrentAnimation("jump_right");
+                    this.curAnimation = "jump_right";
                 }
             } else {
                 if (!this.renderable.isCurrentAnimation("jump_left")) {
                     this.renderable.setCurrentAnimation("jump_left");
+                    this.curAnimation = "jump_left";
                 }
             }
         }
@@ -148,11 +156,13 @@ game.PlayerEntity = me.Entity.extend({
             if (this.walkRight) {
 
                 this.renderable.setCurrentAnimation(curAni + "_right", function () { this.shooting = false; }.bind(this));
+                this.curAnimation = curAni + "_right";
                 direction = 1;
                 posX = this.pos.x;
 
             } else {
                 this.renderable.setCurrentAnimation(curAni + "_left", function () { this.shooting = false; }.bind(this));
+                this.curAnimation = curAni + "_left";
                 direction = -1;
                 posX = this.pos.x + 16;
             }
@@ -208,6 +218,7 @@ game.PlayerEntity = me.Entity.extend({
     die: function(){
         this.dead = true;
         this.renderable.setCurrentAnimation("die");
+        this.curAnimation = "die";
         this.body.vel.y = -200;
         this.body.force.x = 0;
         me.audio.play("die");

@@ -1,4 +1,4 @@
-import {WebSocketClient, WebSocketServer } from "https://deno.land/x/websocket@v0.1.1/mod.ts";
+import {WebSocketClient, WebSocketServer } from "./deno-websocket/mod.ts";
 
 
 interface ClientMessage {

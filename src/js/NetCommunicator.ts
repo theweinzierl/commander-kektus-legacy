@@ -11,7 +11,7 @@ interface ClientMessage {
 }
 
 class NetCommunicator{
-    endpoint: string = "ws://localhost:8080";
+    endpoint: string = "wss://192.168.178.62:8080";
     ws: WebSocket;
     otherPlayers: number[];
     id: number;
@@ -41,7 +41,7 @@ class NetCommunicator{
                     
                     break;
                 case "exchange_game_data":
-                    console.log("Spieldaten empfangen");
+               //     console.log("Spieldaten empfangen");
                     this.onUpdate(sm.data);
                     break;
                 case "error":

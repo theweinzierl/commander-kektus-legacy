@@ -95,6 +95,11 @@ game.resources = [
         "src": "data/img/sprite/commander.png"
     },
     {
+        "name": "retep",
+        "type": "image",
+        "src": "data/img/sprite/retep.png"
+    },
+    {
         "name": "flag",
         "type": "image",
         "src": "data/img/sprite/flag.png"
