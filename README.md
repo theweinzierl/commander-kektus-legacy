@@ -28,7 +28,7 @@ cd commander-kektus && \
 npm install
 ```
 
-Der lokale Server wird mit `npm run start` gestartet.
+Der lokale Server wird mit `npm run start` gestartet. Besser ist es aber den https-Server zu verwenden: `npm run start-https`
 Ein Build kann mit `npm run deploy` erstellt werden.
 
 ### Backend/ Game-Server
@@ -44,5 +44,5 @@ Installation/ Nutzung
 
 Wenn noch nicht geschehen clone und cd wie oben. Dann:
 ```shell
-deno run --allow-net  ./server.ts
+deno run --allow-net --allow-read ./server.ts 
 ```
