@@ -67,30 +67,11 @@ export default game = {
 
     onGameDataReceived: function(data){
         //console.log(data);
-        if(data !== undefined && data.entity === "retep" && this.retep !== null){            
-            switch(data.type){
-                case "full":
-                    this.retep.body.force.x = data.forceX;
-                    this.retep.body.force.y = data.forceY;
-                    this.retep.pos.x = data.posX;
-                    this.retep.pos.y = data.posY;
-                    this.retep.setCurrentAnimation(data.currentAnimation);
-                    break;
-                case "position":
-                    this.retep.pos.x = data.posX;
-                    this.retep.pos.y = data.posY;
-                    this.retep.setCurrentAnimation(data.currentAnimation);
-                    break;
-                case "movement":
-                    this.retep.body.force.x = data.forceX;
-                    this.retep.body.force.y = data.forceY;
-                    this.retep.setCurrentAnimation(data.currentAnimation);
-                    break;
-                case "animation":
-                    this.retep.setCurrentAnimation(data.currentAnimation);
-                    break;
-                default:
-                    return;
+        if(data !== undefined && this.retep !== null){       
+            if(data.entity === "retep"){
+             this.retep.onNetworkUpdate(data);
+            }else if(data.entity === "retepShot"){
+                me.game.world.addChild(me.pool.pull("LaserBlast", data.posX, data.posY, data.direction));
             }
         }
     },

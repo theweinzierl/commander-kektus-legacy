@@ -29,7 +29,7 @@ class NetCommunicator{
         this.ws = new WebSocket(this.endpoint);
         this.ws.onmessage = function (event: any){
             let sm: ServerResponse = JSON.parse(event.data);
-            console.log(sm.type);
+           // console.log(sm.type);
 
             switch(sm.type){
                 case "confirmation":

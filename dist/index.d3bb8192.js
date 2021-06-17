@@ -27911,29 +27911,9 @@ exports.default = game = {
     retep: null,
     onGameDataReceived: function(data) {
         //console.log(data);
-        if (data !== undefined && data.entity === "retep" && this.retep !== null) switch(data.type){
-            case "full":
-                this.retep.body.force.x = data.forceX;
-                this.retep.body.force.y = data.forceY;
-                this.retep.pos.x = data.posX;
-                this.retep.pos.y = data.posY;
-                this.retep.setCurrentAnimation(data.currentAnimation);
-                break;
-            case "position":
-                this.retep.pos.x = data.posX;
-                this.retep.pos.y = data.posY;
-                this.retep.setCurrentAnimation(data.currentAnimation);
-                break;
-            case "movement":
-                this.retep.body.force.x = data.forceX;
-                this.retep.body.force.y = data.forceY;
-                this.retep.setCurrentAnimation(data.currentAnimation);
-                break;
-            case "animation":
-                this.retep.setCurrentAnimation(data.currentAnimation);
-                break;
-            default:
-                return;
+        if (data !== undefined && this.retep !== null) {
+            if (data.entity === "retep") this.retep.onNetworkUpdate(data);
+            else if (data.entity === "retepShot") me.game.world.addChild(me.pool.pull("LaserBlast", data.posX, data.posY, data.direction));
         }
     },
     sendGameData (data) {
@@ -28672,18 +28652,21 @@ game.PlayerEntity = me.Entity.extend({
         this.platforming = false;
         this.platformingForce = 0;
         this.curAnimation = "stand_right";
+        this.lastAnimation = "";
         this.updateCounter = 0;
         game.commander = this;
-        if (game.mode === "multiplayer") this.onNetUpdate = this.sendGameData;
-        else this.onNetUpdate = ()=>{
-        };
     },
     update: function(dt) {
-        /* put onNetUpdate, if you want to limit update rate
-        if(this.updateCounter === 0){            
+        if (game.mode === "multiplayer") {
+            //put onNetUpdate, if you want to limit update rate
+            if (this.updateCounter === 0) {
+                if (this.lastAnimation.indexOf("stand") === -1 || this.curAnimation !== this.lastAnimation) {
+                    this.updateRetep();
+                    this.lastAnimation = this.curAnimation;
+                }
+            }
+            this.updateCounter = (this.updateCounter + 1) % 1;
         }
-        this.updateCounter = (this.updateCounter + 1) % 1;
-        */ this.onNetUpdate("position");
         if (this.dead) {
             this.body.update(dt);
             return this._super(me.Entity, 'update', [
@@ -28701,7 +28684,6 @@ game.PlayerEntity = me.Entity.extend({
                 this.renderable.setCurrentAnimation("walk_right", ()=>me.audio.play("walk")
                 );
                 this.curAnimation = "walk_right";
-            //  this.onNetUpdate("movement");
             }
         } else if (me.input.isKeyPressed('left')) {
             this.body.force.x = -this.body.maxVel.x;
@@ -28710,7 +28692,6 @@ game.PlayerEntity = me.Entity.extend({
                 this.renderable.setCurrentAnimation("walk_left", ()=>me.audio.play("walk")
                 );
                 this.curAnimation = "walk_left";
-            // this.onNetUpdate("movement");
             }
         } else // standing or surfing
         if (this.platforming) {
@@ -28718,7 +28699,6 @@ game.PlayerEntity = me.Entity.extend({
             if (!this.renderable.isCurrentAnimation("surf")) {
                 this.renderable.setCurrentAnimation("surf");
                 this.curAnimation = "surf";
-            //   this.onNetUpdate("movement");
             }
         } else {
             this.body.force.x = 0;
@@ -28726,12 +28706,10 @@ game.PlayerEntity = me.Entity.extend({
                 if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_right")) {
                     this.renderable.setCurrentAnimation("stand_right");
                     this.curAnimation = "stand_right";
-                //  this.onNetUpdate("full");
                 }
             } else if (!this.isBlockedAnimation() && !this.renderable.isCurrentAnimation("stand_left")) {
                 this.renderable.setCurrentAnimation("stand_left");
                 this.curAnimation = "stand_left";
-            // this.onNetUpdate("full");
             }
         }
         // initiate jumping
@@ -28740,7 +28718,6 @@ game.PlayerEntity = me.Entity.extend({
                 this.body.force.y = -this.body.maxVel.y;
                 me.audio.play("jump");
                 this.landing = true;
-            // this.onNetUpdate("movement");
             }
             this.body.jumping = true;
         } else this.body.force.y = 0;
@@ -28750,25 +28727,20 @@ game.PlayerEntity = me.Entity.extend({
                 if (!this.renderable.isCurrentAnimation("fall_right")) {
                     this.renderable.setCurrentAnimation("fall_right");
                     this.curAnimation = "fall_right";
-                //this.onNetUpdate("animation");
                 }
             } else if (!this.renderable.isCurrentAnimation("fall_left")) {
                 this.renderable.setCurrentAnimation("fall_left");
                 this.curAnimation = "fall_left";
-                this.onNetUpdate();
-            //this.onNetUpdate("animation");
             }
         } else if (this.body.jumping) {
             if (this.walkRight) {
                 if (!this.renderable.isCurrentAnimation("jump_right")) {
                     this.renderable.setCurrentAnimation("jump_right");
                     this.curAnimation = "jump_right";
-                //this.onNetUpdate("animation");
                 }
             } else if (!this.renderable.isCurrentAnimation("jump_left")) {
                 this.renderable.setCurrentAnimation("jump_left");
                 this.curAnimation = "jump_left";
-            // this.onNetUpdate("animation");
             }
         }
         // shooting
@@ -28793,10 +28765,10 @@ game.PlayerEntity = me.Entity.extend({
                 direction = -1;
                 posX = this.pos.x + 16;
             }
-            //this.onNetUpdate("full");
             me.audio.play("shoot");
             this.shooting = true;
             me.game.world.addChild(me.pool.pull("LaserBlast", posX, this.pos.y + 35, direction));
+            if (game.mode === "multiplayer") this.initiateRetepShot(posX, this.pos.y + 35, direction);
         }
         this.body.update(dt);
         me.collision.check(this);
@@ -28830,7 +28802,6 @@ game.PlayerEntity = me.Entity.extend({
         }
     },
     die: function() {
-        //this.onNetUpdate("full");
         this.dead = true;
         this.renderable.setCurrentAnimation("die");
         this.curAnimation = "die";
@@ -28840,50 +28811,23 @@ game.PlayerEntity = me.Entity.extend({
         window.setTimeout(()=>me.levelDirector.reloadLevel()
         , 2000);
     },
-    sendGameData (type) {
-        let datagram = {
+    updateRetep () {
+        const data = {
+            entity: "retep",
+            posX: this.pos.x,
+            posY: this.pos.y,
+            currentAnimation: this.curAnimation
         };
-        switch(type){
-            case "full":
-                datagram = {
-                    entity: "retep",
-                    type: type,
-                    forceX: this.body.force.x,
-                    forceY: this.body.force.y,
-                    posX: this.pos.x,
-                    posY: this.pos.y,
-                    currentAnimation: this.curAnimation
-                };
-                break;
-            case "position":
-                datagram = {
-                    entity: "retep",
-                    type: type,
-                    posX: this.pos.x,
-                    posY: this.pos.y,
-                    currentAnimation: this.curAnimation
-                };
-                break;
-            case "movement":
-                datagram = {
-                    entity: "retep",
-                    type: type,
-                    forceX: this.body.force.x,
-                    forceY: this.body.force.y,
-                    currentAnimation: this.curAnimation
-                };
-                break;
-            case "animation":
-                datagram = {
-                    entity: "retep",
-                    type: type,
-                    currentAnimation: this.curAnimation
-                };
-                break;
-            default:
-                return;
-        }
-        game.sendGameData(datagram);
+        game.sendGameData(data);
+    },
+    initiateRetepShot (posX, posY, direction) {
+        const data = {
+            entity: "retepShot",
+            posX: posX,
+            posY: posY,
+            direction: direction
+        };
+        game.sendGameData(data);
     }
 });
 game.LaserBlast = me.Entity.extend({
@@ -29069,7 +29013,7 @@ class NetCommunicator {
         this.ws = new WebSocket(this.endpoint);
         this.ws.onmessage = (function(event) {
             let sm = JSON.parse(event.data);
-            console.log(sm.type);
+            // console.log(sm.type);
             switch(sm.type){
                 case "confirmation":
                     this.id = sm.data.id;
@@ -29127,84 +29071,85 @@ class NetCommunicator {
 exports.default = NetCommunicator;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"5oFJc":[function(require,module,exports) {
-game.Retep = me.Entity.extend({
+game.Retep = me.Sprite.extend({
     init: function(x, y, settings) {
-        this._super(me.Entity, 'init', [
+        settings.image = "retep";
+        settings.framewidth = settings.width = 48;
+        settings.frameheight = settings.height = 48;
+        this._super(me.Sprite, 'init', [
             x,
             y,
             settings
         ]);
-        this.renderable.addAnimation("walk_left", [
+        this.addAnimation("walk_left", [
             0,
             3
         ]);
-        this.renderable.addAnimation("walk_right", [
+        this.addAnimation("walk_right", [
             4,
             7
         ]);
-        this.renderable.addAnimation("jump_left", [
+        this.addAnimation("jump_left", [
             8
         ]);
-        this.renderable.addAnimation("jump_right", [
+        this.addAnimation("jump_right", [
             11
         ]);
-        this.renderable.addAnimation("fall_left", [
+        this.addAnimation("fall_left", [
             9,
             10
         ], 200);
-        this.renderable.addAnimation("fall_right", [
+        this.addAnimation("fall_right", [
             11,
             12,
             200
         ]);
-        this.renderable.addAnimation("stand_left", [
+        this.addAnimation("stand_left", [
             27
         ]);
-        this.renderable.addAnimation("stand_right", [
+        this.addAnimation("stand_right", [
             28
         ]);
-        this.renderable.addAnimation("shoot_walk_right", [
+        this.addAnimation("shoot_walk_right", [
             19
         ], 120);
-        this.renderable.addAnimation("shoot_walk_left", [
+        this.addAnimation("shoot_walk_left", [
             14
         ], 120);
-        this.renderable.addAnimation("shoot_jump_right", [
+        this.addAnimation("shoot_jump_right", [
             20
         ], 120);
-        this.renderable.addAnimation("shoot_jump_left", [
+        this.addAnimation("shoot_jump_left", [
             15
         ], 120);
-        this.renderable.addAnimation("surf", [
+        this.addAnimation("surf", [
             29
         ]);
-        this.renderable.addAnimation("die", [
+        this.addAnimation("die", [
             25,
             26
         ], 200);
-        this.renderable.setCurrentAnimation("stand_right");
+        this.setCurrentAnimation("stand_right");
         this.currentAnimation = "stand_right";
         this.alwaysUpdate = true;
-        //this.body.setFriction(1, 1);    
-        this.body.collisionType = me.collision.types.PLAYER_OBJECT;
         game.retep = this;
     },
-    setCurrentAnimation: function(animation) {
+    onNetworkUpdate: function(data) {
+        this.pos.x = data.posX;
+        this.pos.y = data.posY + 16;
+        this.setMyCurrentAnimation(data.currentAnimation);
+    },
+    setMyCurrentAnimation: function(animation) {
         if (animation !== this.currentAnimation) {
             this.currentAnimation = animation;
-            this.renderable.setCurrentAnimation(this.currentAnimation);
+            this.setCurrentAnimation(this.currentAnimation);
         }
     },
     update: function(dt) {
-        this.body.update(dt);
-        me.collision.check(this);
-        return this._super(me.Entity, 'update', [
+        this._super(me.Sprite, "update", [
             dt
         ]);
-    },
-    onCollision: function(response, other) {
-        if (other.body.collisionType === me.collision.types.WORLD_SHAPE) return true;
-        return false;
+        return true;
     }
 });
 
