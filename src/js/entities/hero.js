@@ -221,8 +221,11 @@ game.PlayerEntity = me.Entity.extend({
                 }
                 return false;
             case me.collision.types.PROJECTILE_OBJECT:
-                if(other.type !== "laserblast"){
+                if(other.type === "kektusthorn"){
                     this.die();
+                }else if(other.type === "laserblastretep") {
+                    this.body.force.x = 0;
+                    this.body.force.y = 0;
                 }
                 return false;
             default:
@@ -289,6 +292,80 @@ game.LaserBlast = me.Entity.extend({
         this.body.update();
         
         this.type = "laserblast";
+        this.direction = direction;
+        this.collided = false;
+    },
+
+
+    update: function (dt) {
+        let bounds = me.game.viewport.getBounds();
+       
+        game.sendGameData();
+
+        if (!this.collided) {
+            this.body.force.x = this.body.maxVel.x * this.direction;
+            me.collision.check(this); // don't call collision.check once the blast collided because this will abort callback of explode-animation
+        }
+
+        // remove from world, if left viewport
+        if ((this.pos.y <= bounds.pos.y)
+            || (this.pos.y + this.height >= bounds.pos.y + bounds.height)
+            || (this.pos.x + this.width <= bounds.pos.x)
+            || (this.pos.x + this.width >= bounds.pos.x + bounds.width)) {
+
+            me.game.world.removeChild(this);
+        }
+
+        this.body.update();
+
+        return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+    },
+
+    onCollision: function (response, other) {
+        if (this.collided) return false;
+
+        if (other.body.collisionType !== me.collision.types.PLAYER_OBJECT) {
+            this.body.setMaxVelocity(0, 0);
+            me.audio.play("laserhit");
+
+            this.renderable.setCurrentAnimation("explode", 
+            function () {                
+                me.game.world.removeChild(this);
+                return false
+            }.bind(this));
+
+            this.collided = true;
+        } 
+
+        return false;
+    }
+});
+
+game.LaserBlastRetep = me.Entity.extend({
+
+    init: function (x, y, direction) {
+
+        let settings = {
+            image: 'neuralblast',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
+
+        this._super(me.Entity, 'init', [x, y, settings]);       
+        
+        this.alwaysUpdate = true;
+
+        this.renderable.addAnimation("shoot", [0, 1, 2, 3, 4]);
+        this.renderable.addAnimation("explode", [5], 100);
+        this.renderable.setCurrentAnimation("shoot");
+
+        
+        this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
+        this.body.setMaxVelocity(7, 0);        
+        this.body.update();
+        
+        this.type = "laserblastretep";
         this.direction = direction;
         this.collided = false;
     },
