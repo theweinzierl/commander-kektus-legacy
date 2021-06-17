@@ -40,6 +40,7 @@ export default game = {
         me.pool.register("Torch", game.Torch); 
         me.pool.register("Platform", game.Platform);
         me.pool.register("LaserBlast", game.LaserBlast);
+        me.pool.register("LaserBlastRetep", game.LaserBlastRetep);
         me.pool.register("KektusThorn", game.KektusThorn);        
         me.pool.register("Bloog", game.Bloog);
         me.pool.register("Slug", game.Slug);
@@ -71,7 +72,7 @@ export default game = {
             if(data.entity === "retep"){
              this.retep.onNetworkUpdate(data);
             }else if(data.entity === "retepShot"){
-                me.game.world.addChild(me.pool.pull("LaserBlast", data.posX, data.posY, data.direction));
+                me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
             }
         }
     },
