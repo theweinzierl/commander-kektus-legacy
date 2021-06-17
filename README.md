@@ -46,3 +46,6 @@ Wenn noch nicht geschehen clone und cd wie oben. Dann:
 ```shell
 deno run --allow-net --allow-read ./server.ts 
 ```
+
+## Hosting des Game-Servers
+Der Game-Server läuft als ec2-Instanz bei aws und ist unter der IP 18.192.24.53 erreichbar. Auf Port 8080 lauscht der WebsocketServer. Auf Port 1234 läuft ein akuteller Multiplayer-Build des Spiels.
