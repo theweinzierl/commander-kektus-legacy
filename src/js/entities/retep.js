@@ -21,22 +21,36 @@ game.Retep = me.Entity.extend({
 
         this.renderable.setCurrentAnimation("stand_right");
         this.currentAnimation = "stand_right";
+        this.alwaysUpdate = true;
 
-        this.body.setMaxVelocity(3, 15);
-        this.body.setFriction(0.4, 0.5);    
-        this.body.removeShapeAt(0);
-        this.body.addShape(new me.Rect(0, 16, 16, 48));
+        //this.body.setFriction(1, 1);    
         this.body.collisionType = me.collision.types.PLAYER_OBJECT;
 
         game.retep = this;
 
     },
 
-    setCurrentAnimation(animation){
+    setCurrentAnimation: function (animation){
         if(animation !== this.currentAnimation){
             this.currentAnimation = animation;
             this.renderable.setCurrentAnimation(this.currentAnimation);
         }
+    },
+
+    update: function (dt) {
+
+        this.body.update(dt);
+        me.collision.check(this);
+
+        return (this._super(me.Entity, 'update', [dt]));
+
+    },
+
+    onCollision: function (response, other) {
+        if(other.body.collisionType === me.collision.types.WORLD_SHAPE){
+            return true;
+        }
+        return false;
     }
 
 });

@@ -10,13 +10,20 @@ interface ClientMessage {
     data?: any
 }
 
+enum ClientState{
+    DISCONNECTED,
+    WAITING,
+    BUSY
+}
+
 class NetCommunicator{
-    endpoint: string = "wss://192.168.178.62:8080";
+    endpoint: string = "wss://18.192.24.53:8080";
     ws: WebSocket;
     otherPlayers: number[];
     id: number;
     opponentId: number = -1;
     onUpdate: CallableFunction;
+    state: ClientState = ClientState.DISCONNECTED;
 
     connect(): void {
         this.ws = new WebSocket(this.endpoint);
@@ -27,6 +34,7 @@ class NetCommunicator{
             switch(sm.type){
                 case "confirmation":
                     this.id = sm.data.id;
+                    this.state = ClientState.WAITING;
                 case "all_players":
                     this.otherPlayers = sm.data;
                     if(this.otherPlayers.length > 1){
@@ -63,7 +71,9 @@ class NetCommunicator{
     }
 
     send(request: string): void{
-        this.ws.send(request);
+        if(this.state !== ClientState.DISCONNECTED){
+            this.ws.send(request);
+        }
     }
 
     exchangeGameData(gameData?: any): void{
