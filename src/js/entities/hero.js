@@ -227,7 +227,7 @@ game.PlayerEntity = me.Entity.extend({
                 if(other.type === "kektusthorn"){
                     this.die();
                 }else if(other.type === "laserblastretep") {
-                    this.freeze();
+                    if(!this.freezed) this.freeze();
                 }
                 return false;
             default:

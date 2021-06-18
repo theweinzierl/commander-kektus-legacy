@@ -28801,7 +28801,9 @@ game.PlayerEntity = me.Entity.extend({
                 return false;
             case me.collision.types.PROJECTILE_OBJECT:
                 if (other.type === "kektusthorn") this.die();
-                else if (other.type === "laserblastretep") this.freeze();
+                else if (other.type === "laserblastretep") {
+                    if (!this.freezed) this.freeze();
+                }
                 return false;
             default:
                 return false;
