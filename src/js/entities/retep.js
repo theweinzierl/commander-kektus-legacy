@@ -61,12 +61,15 @@ game.Retep = me.Sprite.extend({
     },
 
     onCollision: function (response, other) {
+        /*
         if(other.body.collisionType === me.collision.types.PLAYER_OBJECT){
             return false;
         }else if(other.body.collisionType === me.collision.types.PROJECTILE_OBJECT){
             return false;
         }
-        return true;
+       // return true;
+       */
+      return false;
     }
 
 });

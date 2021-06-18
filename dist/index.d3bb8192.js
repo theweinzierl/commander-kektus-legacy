@@ -29234,9 +29234,14 @@ game.Retep = me.Sprite.extend({
         return true;
     },
     onCollision: function(response, other) {
-        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT) return false;
-        else if (other.body.collisionType === me.collision.types.PROJECTILE_OBJECT) return false;
-        return true;
+        /*
+        if(other.body.collisionType === me.collision.types.PLAYER_OBJECT){
+            return false;
+        }else if(other.body.collisionType === me.collision.types.PROJECTILE_OBJECT){
+            return false;
+        }
+       // return true;
+       */ return false;
     }
 });
 
