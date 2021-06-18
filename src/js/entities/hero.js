@@ -68,7 +68,7 @@ game.PlayerEntity = me.Entity.extend({
             return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
         }
 
-        if (this.shooting) {
+        if (this.shooting || this.freezed) {
             return (this._super(me.Entity, 'update', [dt]));
         }
 
@@ -198,7 +198,7 @@ game.PlayerEntity = me.Entity.extend({
     },
 
     isBlockedAnimation: function () {
-        return (this.body.jumping || this.body.falling || this.shooting || this.freezed);
+        return (this.body.jumping || this.body.falling || this.shooting);
     },
 
     onCollision: function (response, other) {
@@ -227,7 +227,7 @@ game.PlayerEntity = me.Entity.extend({
                 if(other.type === "kektusthorn"){
                     this.die();
                 }else if(other.type === "laserblastretep") {
-                    if(!this.freezed) this.freeze();
+                    this.freeze();
                 }
                 return false;
             default:
@@ -236,6 +236,7 @@ game.PlayerEntity = me.Entity.extend({
     },
 
     freeze: function(){
+        if(this.freezed) return;
         this.freezed = true;
         this.curAnimation = "freeze";
         this.renderable.setCurrentAnimation("freeze", function () { this.freezed = false; }.bind(this));

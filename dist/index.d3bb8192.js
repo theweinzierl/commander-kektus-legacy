@@ -28678,7 +28678,7 @@ game.PlayerEntity = me.Entity.extend({
                 dt
             ]) || this.body.vel.x !== 0 || this.body.vel.y !== 0;
         }
-        if (this.shooting) return this._super(me.Entity, 'update', [
+        if (this.shooting || this.freezed) return this._super(me.Entity, 'update', [
             dt
         ]);
         // walking
@@ -28782,7 +28782,7 @@ game.PlayerEntity = me.Entity.extend({
         ]) || this.body.vel.x !== 0 || this.body.vel.y !== 0;
     },
     isBlockedAnimation: function() {
-        return this.body.jumping || this.body.falling || this.shooting || this.freezed;
+        return this.body.jumping || this.body.falling || this.shooting;
     },
     onCollision: function(response, other) {
         switch(other.body.collisionType){
@@ -28801,15 +28801,14 @@ game.PlayerEntity = me.Entity.extend({
                 return false;
             case me.collision.types.PROJECTILE_OBJECT:
                 if (other.type === "kektusthorn") this.die();
-                else if (other.type === "laserblastretep") {
-                    if (!this.freezed) this.freeze();
-                }
+                else if (other.type === "laserblastretep") this.freeze();
                 return false;
             default:
                 return false;
         }
     },
     freeze: function() {
+        if (this.freezed) return;
         this.freezed = true;
         this.curAnimation = "freeze";
         this.renderable.setCurrentAnimation("freeze", (function() {
