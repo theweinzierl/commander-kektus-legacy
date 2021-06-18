@@ -22,6 +22,8 @@ game.PlayerEntity = me.Entity.extend({
         this.renderable.addAnimation("shoot_jump_left", [15], 120);
         this.renderable.addAnimation("surf", [29]);
         this.renderable.addAnimation("die", [25, 26], 200);
+        this.renderable.addAnimation("freeze",[30], 500);
+
 
         this.renderable.setCurrentAnimation("stand_right");
 
@@ -35,6 +37,7 @@ game.PlayerEntity = me.Entity.extend({
         this.walkRight = true;
         this.type = "commander";
         this.shooting = false;
+        this.freezed = false;
         this.dead = false;
         this.landing = false;
         this.platforming = false;
@@ -195,7 +198,7 @@ game.PlayerEntity = me.Entity.extend({
     },
 
     isBlockedAnimation: function () {
-        return (this.body.jumping || this.body.falling || this.shooting);
+        return (this.body.jumping || this.body.falling || this.shooting || this.freezed);
     },
 
     onCollision: function (response, other) {
@@ -224,13 +227,18 @@ game.PlayerEntity = me.Entity.extend({
                 if(other.type === "kektusthorn"){
                     this.die();
                 }else if(other.type === "laserblastretep") {
-                    this.body.force.x = 0;
-                    this.body.force.y = 0;
+                    this.freeze();
                 }
                 return false;
             default:
                 return false;
         }
+    },
+
+    freeze: function(){
+        this.freezed = true;
+        this.curAnimation = "freeze";
+        this.renderable.setCurrentAnimation("freeze", function () { this.freezed = false; }.bind(this));
     },
 
     die: function(){
@@ -323,19 +331,19 @@ game.LaserBlast = me.Entity.extend({
 
     onCollision: function (response, other) {
         if (this.collided) return false;
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT && other.type === "commander") return false;
 
-        if (other.body.collisionType !== me.collision.types.PLAYER_OBJECT) {
-            this.body.setMaxVelocity(0, 0);
-            me.audio.play("laserhit");
+        this.body.setMaxVelocity(0, 0);
+        me.audio.play("laserhit");
 
-            this.renderable.setCurrentAnimation("explode", 
+        this.renderable.setCurrentAnimation("explode", 
             function () {                
                 me.game.world.removeChild(this);
                 return false
             }.bind(this));
 
-            this.collided = true;
-        } 
+        this.collided = true;
+        
 
         return false;
     }
@@ -397,19 +405,18 @@ game.LaserBlastRetep = me.Entity.extend({
 
     onCollision: function (response, other) {
         if (this.collided) return false;
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT && other.type === "retep") return false;
 
-        if (other.body.collisionType !== me.collision.types.PLAYER_OBJECT) {
-            this.body.setMaxVelocity(0, 0);
-            me.audio.play("laserhit");
-
-            this.renderable.setCurrentAnimation("explode", 
+        this.body.setMaxVelocity(0, 0);
+        me.audio.play("laserhit");
+        
+        this.renderable.setCurrentAnimation("explode", 
             function () {                
                 me.game.world.removeChild(this);
                 return false
             }.bind(this));
 
-            this.collided = true;
-        } 
+        this.collided = true;
 
         return false;
     }

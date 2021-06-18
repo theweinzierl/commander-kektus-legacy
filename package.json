@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@angular/cli": "^12.0.4",
     "melonjs": "^8.0.1",
     "parcel": "^2.0.0-beta.3.1"
   }

@@ -27892,6 +27892,7 @@ exports.default = game = {
         me.pool.register("Torch", game.Torch);
         me.pool.register("Platform", game.Platform);
         me.pool.register("LaserBlast", game.LaserBlast);
+        me.pool.register("LaserBlastRetep", game.LaserBlastRetep);
         me.pool.register("KektusThorn", game.KektusThorn);
         me.pool.register("Bloog", game.Bloog);
         me.pool.register("Slug", game.Slug);
@@ -27913,7 +27914,7 @@ exports.default = game = {
         //console.log(data);
         if (data !== undefined && this.retep !== null) {
             if (data.entity === "retep") this.retep.onNetworkUpdate(data);
-            else if (data.entity === "retepShot") me.game.world.addChild(me.pool.pull("LaserBlast", data.posX, data.posY, data.direction));
+            else if (data.entity === "retepShot") me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
         }
     },
     sendGameData (data) {
@@ -28637,6 +28638,9 @@ game.PlayerEntity = me.Entity.extend({
             25,
             26
         ], 200);
+        this.renderable.addAnimation("freeze", [
+            30
+        ], 500);
         this.renderable.setCurrentAnimation("stand_right");
         this.body.setMaxVelocity(3, 15);
         this.body.setFriction(0.4, 0.5);
@@ -28647,6 +28651,7 @@ game.PlayerEntity = me.Entity.extend({
         this.walkRight = true;
         this.type = "commander";
         this.shooting = false;
+        this.freezed = false;
         this.dead = false;
         this.landing = false;
         this.platforming = false;
@@ -28777,7 +28782,7 @@ game.PlayerEntity = me.Entity.extend({
         ]) || this.body.vel.x !== 0 || this.body.vel.y !== 0;
     },
     isBlockedAnimation: function() {
-        return this.body.jumping || this.body.falling || this.shooting;
+        return this.body.jumping || this.body.falling || this.shooting || this.freezed;
     },
     onCollision: function(response, other) {
         switch(other.body.collisionType){
@@ -28795,11 +28800,19 @@ game.PlayerEntity = me.Entity.extend({
                 if (!(other.type === 'monster') || other.alive && !this.dead) this.die();
                 return false;
             case me.collision.types.PROJECTILE_OBJECT:
-                if (other.type !== "laserblast") this.die();
+                if (other.type === "kektusthorn") this.die();
+                else if (other.type === "laserblastretep") this.freeze();
                 return false;
             default:
                 return false;
         }
+    },
+    freeze: function() {
+        this.freezed = true;
+        this.curAnimation = "freeze";
+        this.renderable.setCurrentAnimation("freeze", (function() {
+            this.freezed = false;
+        }).bind(this));
     },
     die: function() {
         this.dead = true;
@@ -28878,15 +28891,73 @@ game.LaserBlast = me.Entity.extend({
     },
     onCollision: function(response, other) {
         if (this.collided) return false;
-        if (other.body.collisionType !== me.collision.types.PLAYER_OBJECT) {
-            this.body.setMaxVelocity(0, 0);
-            me.audio.play("laserhit");
-            this.renderable.setCurrentAnimation("explode", (function() {
-                me.game.world.removeChild(this);
-                return false;
-            }).bind(this));
-            this.collided = true;
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT && other.type === "commander") return false;
+        this.body.setMaxVelocity(0, 0);
+        me.audio.play("laserhit");
+        this.renderable.setCurrentAnimation("explode", (function() {
+            me.game.world.removeChild(this);
+            return false;
+        }).bind(this));
+        this.collided = true;
+        return false;
+    }
+});
+game.LaserBlastRetep = me.Entity.extend({
+    init: function(x, y, direction) {
+        let settings = {
+            image: 'neuralblast',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
+        this._super(me.Entity, 'init', [
+            x,
+            y,
+            settings
+        ]);
+        this.alwaysUpdate = true;
+        this.renderable.addAnimation("shoot", [
+            0,
+            1,
+            2,
+            3,
+            4
+        ]);
+        this.renderable.addAnimation("explode", [
+            5
+        ], 100);
+        this.renderable.setCurrentAnimation("shoot");
+        this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
+        this.body.setMaxVelocity(7, 0);
+        this.body.update();
+        this.type = "laserblastretep";
+        this.direction = direction;
+        this.collided = false;
+    },
+    update: function(dt) {
+        let bounds = me.game.viewport.getBounds();
+        game.sendGameData();
+        if (!this.collided) {
+            this.body.force.x = this.body.maxVel.x * this.direction;
+            me.collision.check(this); // don't call collision.check once the blast collided because this will abort callback of explode-animation
         }
+        // remove from world, if left viewport
+        if (this.pos.y <= bounds.pos.y || this.pos.y + this.height >= bounds.pos.y + bounds.height || this.pos.x + this.width <= bounds.pos.x || this.pos.x + this.width >= bounds.pos.x + bounds.width) me.game.world.removeChild(this);
+        this.body.update();
+        return this._super(me.Entity, 'update', [
+            dt
+        ]) || this.body.vel.x !== 0 || this.body.vel.y !== 0;
+    },
+    onCollision: function(response, other) {
+        if (this.collided) return false;
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT && other.type === "retep") return false;
+        this.body.setMaxVelocity(0, 0);
+        me.audio.play("laserhit");
+        this.renderable.setCurrentAnimation("explode", (function() {
+            me.game.world.removeChild(this);
+            return false;
+        }).bind(this));
+        this.collided = true;
         return false;
     }
 });
@@ -29081,6 +29152,9 @@ game.Retep = me.Sprite.extend({
             y,
             settings
         ]);
+        this.body = new me.Body(this);
+        this.body.addShape(new me.Rect(0, 16, 16, 48));
+        this.isKinematic = false;
         this.addAnimation("walk_left", [
             0,
             3
@@ -29129,9 +29203,14 @@ game.Retep = me.Sprite.extend({
             25,
             26
         ], 200);
+        this.addAnimation("freeze", [
+            30
+        ], 500);
         this.setCurrentAnimation("stand_right");
         this.currentAnimation = "stand_right";
         this.alwaysUpdate = true;
+        this.body.collisionType = me.collision.types.PLAYER_OBJECT;
+        this.type = "retep";
         game.retep = this;
     },
     onNetworkUpdate: function(data) {
@@ -29149,6 +29228,12 @@ game.Retep = me.Sprite.extend({
         this._super(me.Sprite, "update", [
             dt
         ]);
+        me.collision.check(this);
+        return true;
+    },
+    onCollision: function(response, other) {
+        if (other.body.collisionType === me.collision.types.PLAYER_OBJECT) return false;
+        else if (other.body.collisionType === me.collision.types.PROJECTILE_OBJECT) return false;
         return true;
     }
 });
