@@ -169,7 +169,7 @@ function closeGame(initiatorId: number, opponentId: number): boolean{
     let opponent: Client | undefined = curClients.get(opponentId);
 
     if(initiator === undefined || opponent === undefined) return false;
-    if(opponent.opponent!.id !== initiatorId || initiator.opponent!.id !== opponentId) return;  
+    if(opponent.opponent!.id !== initiatorId || initiator.opponent!.id !== opponentId) return false;  
     if(opponent.state === ClientState.WAITING || initiator.state === ClientState.WAITING) return false;
 
     initiator.state = ClientState.WAITING;
