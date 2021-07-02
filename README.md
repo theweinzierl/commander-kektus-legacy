@@ -3,6 +3,8 @@
 ## About
 Commander Kektus ist ein Mini-Jump&Run und eine kleine Hommage an Commander Keen von id-Software (https://de.wikipedia.org/wiki/Commander_Keen), welches im Rahmen der Vorlesung "Webprogrammierung" an der DHBW Mannheim entsteht.
 
+![demoscreen](demoscreen.png)
+
 ## Spielen
 ### aktueller Build
 https://theweinzierl.github.io/commander-kektus/
