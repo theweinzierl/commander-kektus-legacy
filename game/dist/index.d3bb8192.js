@@ -140,10 +140,10 @@
       this[globalName] = mainExports;
     }
   }
-})({"cNqZK":[function(require,module,exports) {
+})({"5jW0T":[function(require,module,exports) {
 var HMR_HOST = null;
 var HMR_PORT = null;
-var HMR_SECURE = true;
+var HMR_SECURE = false;
 var HMR_ENV_HASH = "d751713988987e9331980363e24189ce";
 module.bundle.HMR_BUNDLE_ID = "ad8f65809b71f8b056dc8bc4d3bb8192"; // @flow
 /* global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE */ /*::
@@ -408,7 +408,7 @@ _melonjsDefault.default.device.onReady(function onReady() {
     const gameParams = new URLSearchParams(window.location.search);
     const modeParam = gameParams.get("mode");
     let nameParam = gameParams.get("name");
-    if (nameParam === null) nameParam = "Michael";
+    if (nameParam === null) nameParam = "Kektus";
     if (modeParam !== null && modeParam === "multiplayer") {
         _gameDefault.default.setMode("multiplayer");
         _gameDefault.default.setPlayerName(nameParam);
@@ -29242,5 +29242,5 @@ game.LevelEntity = me.LevelEntity.extend({
 
 },{}],"prN38":[function(require,module,exports) {
 
-},{}]},["cNqZK","69epD"], "69epD", "parcelRequireb4f6")
+},{}]},["5jW0T","69epD"], "69epD", "parcelRequireb4f6")
 

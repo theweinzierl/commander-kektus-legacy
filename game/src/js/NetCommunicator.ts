@@ -58,7 +58,6 @@ class NetCommunicator{
                 this.state = ClientState.BUSY;
                 this.opponentId = sm.data.opponentId;
                 this.onOpponentConnected(sm.data.opponentName);
-                //this.onGameDataReceived(sm.data);
                 break;
             case "exchange_game_data":
                 this.onGameDataReceived(sm.data);

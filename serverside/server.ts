@@ -86,7 +86,10 @@ wss.on("connection", function (ws: WebSocketClient) {
 function setPlayerName(clientId: number, playerName: string | null): void{
     let client: Client | undefined = curClients.get(clientId);
     if(client === undefined) return;
-    let checkedPlayerName: string = playerName ? playerName : ("Player_" + clientId);
+    let checkedPlayerName: string = playerName;
+    if(playerName === null || playerName === "Kektus"){
+        checkedPlayerName = ("Player_" + clientId);
+    }
     client.playerName = checkedPlayerName;
 }
 
@@ -167,7 +170,7 @@ function initiateGame(initiatorId: number, opponentId: number): boolean{
     opponent.opponent = initiator;
 
     initiator.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: opponent.id, opponentName: opponent.playerName}}));
-    opponent.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: initiator.id, opponentName: opponent.playerName}}));
+    opponent.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: initiator.id, opponentName: initiator.playerName}}));
     return true;
 }
 

@@ -19,7 +19,7 @@ me.device.onReady(function onReady() {
     const modeParam = gameParams.get("mode");
     let nameParam = gameParams.get("name");
 
-    if(nameParam === null) nameParam = "Michael";
+    if(nameParam === null) nameParam = "Kektus";
 
     if(modeParam !== null && modeParam === "multiplayer"){
         game.setMode("multiplayer");        
