@@ -13,7 +13,7 @@ export default game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(320, 240, {parent : "screen", scale : "auto", scaleMethod : "flex-width"})) {
+        if (!me.video.init(340, 240, {parent : "screen", scale : "auto", scaleMethod : "flex-width"})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
@@ -47,8 +47,12 @@ export default game = {
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
+        me.pool.register("Label", game.Label);
 
-        if(this.mode === "multiplayer") me.pool.register("Retep", game.Retep);
+        if(this.mode === "multiplayer"){
+            me.pool.register("Retep", game.Retep);
+            this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0));
+        }
 
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
@@ -66,6 +70,8 @@ export default game = {
 
     retep: null,
 
+    playerName: "",
+
     onGameDataReceived: function(data){
         //console.log(data);
         if(data !== undefined && this.retep !== null){       
@@ -79,11 +85,19 @@ export default game = {
 
     sendGameData(data){
        if(this.netCom === null) return;
-       if(this.retep !== null) this.netCom.exchangeGameData(data);
+       this.netCom.exchangeGameData(data);
     },
 
     setNetCom(netCom){
-        netCom.onUpdate = this.onGameDataReceived.bind(this);
+        netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
         this.netCom = netCom;
+    },
+
+    setPlayerName(name){
+        this.playerName = name;
+    },
+
+    setMode(mode){
+        this.mode = mode;
     }
 };

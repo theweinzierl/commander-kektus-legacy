@@ -140,10 +140,10 @@
       this[globalName] = mainExports;
     }
   }
-})({"cNqZK":[function(require,module,exports) {
+})({"5jW0T":[function(require,module,exports) {
 var HMR_HOST = null;
 var HMR_PORT = null;
-var HMR_SECURE = true;
+var HMR_SECURE = false;
 var HMR_ENV_HASH = "d751713988987e9331980363e24189ce";
 module.bundle.HMR_BUNDLE_ID = "ad8f65809b71f8b056dc8bc4d3bb8192"; // @flow
 /* global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE */ /*::
@@ -390,8 +390,8 @@ var _game = require("./js/game");
 var _gameDefault = parcelHelpers.interopDefault(_game);
 var _resources = require("./js/resources");
 var _resourcesDefault = parcelHelpers.interopDefault(_resources);
-var _hud = require("./js/entities/HUD");
-var _hudDefault = parcelHelpers.interopDefault(_hud);
+var _controls = require("./js/entities/controls");
+var _controlsDefault = parcelHelpers.interopDefault(_controls);
 var _title = require("./js/screens/title");
 var _titleDefault = parcelHelpers.interopDefault(_title);
 var _play = require("./js/screens/play");
@@ -407,14 +407,25 @@ var _obstaclesDefault = parcelHelpers.interopDefault(_obstacles);
 var _goodies = require("./js/entities/goodies");
 var _goodiesDefault = parcelHelpers.interopDefault(_goodies);
 _melonjsDefault.default.device.onReady(function onReady() {
-    _gameDefault.default.mode = "multiplayer";
-    let netCom = new _netCommunicatorDefault.default();
-    netCom.connect();
-    _gameDefault.default.setNetCom(netCom);
+    // entry point of the game
+    // inspect url-query to set proper mode and username
+    const gameParams = new URLSearchParams(window.location.search);
+    const modeParam = gameParams.get("mode");
+    let nameParam = gameParams.get("name");
+    if (nameParam === null) nameParam = "Michael";
+    if (modeParam !== null && modeParam === "multiplayer") {
+        _gameDefault.default.setMode("multiplayer");
+        let netCom = new _netCommunicatorDefault.default(nameParam);
+        netCom.connect();
+        _gameDefault.default.setNetCom(netCom);
+    } else {
+        _gameDefault.default.setPlayerName(nameParam);
+        _gameDefault.default.setMode("singleplayer");
+    }
     _gameDefault.default.onload();
 });
 
-},{"melonjs":"2nNa0","./js/game":"51FYG","./js/resources":"44u4K","./js/entities/HUD":"6xJAB","./js/screens/title":"jHsGT","./js/screens/play":"4RDpw","./js/entities/enemies":"1Kfnl","./js/entities/hero":"6JfNW","./js/entities/obstacles":"4Ezvv","./js/entities/goodies":"prN38","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX","./js/NetCommunicator":"7kLUw","./js/entities/retep":"5oFJc"}],"2nNa0":[function(require,module,exports) {
+},{"melonjs":"2nNa0","./js/game":"51FYG","./js/resources":"44u4K","./js/screens/title":"jHsGT","./js/screens/play":"4RDpw","./js/entities/enemies":"1Kfnl","./js/entities/hero":"6JfNW","./js/entities/obstacles":"4Ezvv","./js/entities/goodies":"prN38","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX","./js/NetCommunicator":"7kLUw","./js/entities/retep":"5oFJc","./js/entities/controls":"4VBAE"}],"2nNa0":[function(require,module,exports) {
 var global = arguments[3];
 (function() {
     /* eslint-disable no-undef */ (function(global1) {
@@ -27868,7 +27879,7 @@ exports.default = game = {
     // Run on page load.
     "onload": function() {
         // Initialize the video.
-        if (!me.video.init(320, 240, {
+        if (!me.video.init(340, 240, {
             parent: "screen",
             scale: "auto",
             scaleMethod: "flex-width"
@@ -27899,7 +27910,11 @@ exports.default = game = {
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
-        if (this.mode === "multiplayer") me.pool.register("Retep", game.Retep);
+        me.pool.register("Label", game.Label);
+        if (this.mode === "multiplayer") {
+            me.pool.register("Retep", game.Retep);
+            this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0));
+        }
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP, "jump", true);
@@ -27910,6 +27925,7 @@ exports.default = game = {
     netCom: null,
     commander: null,
     retep: null,
+    playerName: "",
     onGameDataReceived: function(data) {
         //console.log(data);
         if (data !== undefined && this.retep !== null) {
@@ -27919,11 +27935,17 @@ exports.default = game = {
     },
     sendGameData (data) {
         if (this.netCom === null) return;
-        if (this.retep !== null) this.netCom.exchangeGameData(data);
+        this.netCom.exchangeGameData(data);
     },
     setNetCom (netCom) {
-        netCom.onUpdate = this.onGameDataReceived.bind(this);
+        netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
         this.netCom = netCom;
+    },
+    setPlayerName (name) {
+        this.playerName = name;
+    },
+    setMode (mode) {
+        this.mode = mode;
     }
 };
 
@@ -27961,6 +27983,16 @@ exports.export = function(dest, destName, get) {
 
 },{}],"44u4K":[function(require,module,exports) {
 game.resources = [
+    {
+        name: "PressStart2P",
+        type: "image",
+        src: "data/fnt/arial.png"
+    },
+    {
+        name: "PressStart2P",
+        type: "binary",
+        src: "data/fnt/arial.fnt"
+    },
     {
         "name": "walk",
         "type": "audio",
@@ -28098,60 +28130,6 @@ game.resources = [
     }
 ];
 
-},{}],"6xJAB":[function(require,module,exports) {
-/**
- * a HUD container and child items
- */ game.HUD = game.HUD || {
-};
-game.HUD.Container = me.Container.extend({
-    init: function() {
-        // call the constructor
-        this._super(me.Container, 'init');
-        // persistent across level change
-        this.isPersistent = true;
-        // make sure we use screen coordinates
-        this.floating = true;
-        // give a name
-        this.name = "HUD";
-        // add our child score object at the top left corner
-        this.addChild(new game.HUD.ScoreItem(5, 5));
-    }
-});
-/**
- * a basic HUD item to display score
- */ game.HUD.ScoreItem = me.Renderable.extend({
-    /**
-     * constructor
-     */ init: function(x, y) {
-        // call the parent constructor
-        // (size does not matter here)
-        this._super(me.Renderable, 'init', [
-            x,
-            y,
-            10,
-            10
-        ]);
-        // local copy of the global score
-        this.score = -1;
-    },
-    /**
-     * update function
-     */ update: function() {
-        // we don't do anything fancy here, so just
-        // return true if the score has been updated
-        if (this.score !== game.data.score) {
-            this.score = game.data.score;
-            return true;
-        }
-        return false;
-    },
-    /**
-     * draw the score
-     */ draw: function(context) {
-    // draw it baby !
-    }
-});
-
 },{}],"jHsGT":[function(require,module,exports) {
 game.TitleScreen = me.Stage.extend({
     /**
@@ -28166,21 +28144,11 @@ game.TitleScreen = me.Stage.extend({
 
 },{}],"4RDpw":[function(require,module,exports) {
 game.PlayScreen = me.Stage.extend({
-    /**
-     *  action to perform on state change
-     */ onResetEvent: function() {
+    onResetEvent: function() {
         // load a level
         me.levelDirector.loadLevel("desert");
-        // reset the score
-        game.data.score = 0;
-        // Add our HUD to the game world, add it last so that this is on top of the rest.
-        // Can also be forced by specifying a "Infinity" z value to the addChild function.
-        this.HUD = new game.HUD.Container();
-        me.game.world.addChild(this.HUD);
     },
-    /**
-     *  action to perform when leaving this screen (state change)
-     */ onDestroyEvent: function() {
+    onDestroyEvent: function() {
         // remove the HUD from the game world
         me.game.world.removeChild(this.HUD);
     }
@@ -28659,9 +28627,21 @@ game.PlayerEntity = me.Entity.extend({
         this.curAnimation = "stand_right";
         this.lastAnimation = "";
         this.updateCounter = 0;
+        this.font = new me.BitmapText(0, 0, {
+            font: "PressStart2P",
+            size: 1
+        });
+        // this.label = me.game.world.addChild(me.pool.pull("Label", this.pos.x, this.pos.y - 35, game.playerName),10);
         game.commander = this;
     },
+    draw: function(renderer) {
+        this._super(me.Entity, 'draw', [
+            renderer
+        ]);
+        this.font.draw(renderer, game.playerName, -20, -10);
+    },
     update: function(dt) {
+        // this.label.setPos(this.pos.x, this.pos.y);
         if (game.mode === "multiplayer") {
             //put onNetUpdate, if you want to limit update rate
             if (this.updateCounter === 0) {
@@ -29081,38 +29061,47 @@ var ClientState;
 })(ClientState || (ClientState = {
 }));
 class NetCommunicator {
+    constructor(name){
+        this.endpoint = "wss://18.192.24.53:8080";
+        this.opponentId = -1;
+        this.onGameDataReceived = ()=>{
+        };
+        this.onOpponentConnected = ()=>{
+        };
+        this.state = ClientState.DISCONNECTED;
+        this.name = "";
+        this.name = name;
+    }
     connect() {
         this.ws = new WebSocket(this.endpoint);
-        this.ws.onmessage = (function(event) {
-            let sm = JSON.parse(event.data);
-            // console.log(sm.type);
-            switch(sm.type){
-                case "confirmation":
-                    this.id = sm.data.id;
-                    this.state = ClientState.WAITING;
-                case "all_players":
-                    this.otherPlayers = sm.data;
-                    if (this.otherPlayers.length > 1) {
-                        if (this.opponentId === -1) this.initiateGame(this.otherPlayers[1]);
-                    }
-                    break;
-                case "initiate_game_confirmation":
-                    this.opponentId = sm.data.opponentId;
-                    console.log("opponent-Id: " + this.opponentId);
-                    break;
-                case "close_game_confirmation":
-                    break;
-                case "exchange_game_data":
-                    //     console.log("Spieldaten empfangen");
-                    this.onUpdate(sm.data);
-                    break;
-                case "error":
-                    console.log("Server-Error: " + sm.data.description);
-                    break;
-                default:
-                    console.log("Received unkown message.");
-            }
-        }).bind(this);
+        this.ws.onmessage = this.onMessage;
+    }
+    onMessage(event) {
+        let sm = JSON.parse(event.data);
+        switch(sm.type){
+            case "connected_confirmation":
+                this.id = sm.data.id;
+                this.state = ClientState.WAITING;
+                let request = {
+                    type: "id_confirmation",
+                    id: this.id
+                };
+                this.send(JSON.stringify(request));
+                break;
+            case "initiate_game_confirmation":
+                this.state = ClientState.BUSY;
+                this.opponentId = sm.data.opponentId;
+                break;
+            case "exchange_game_data":
+                //  console.log("Spieldaten empfangen");
+                this.onGameDataReceived(sm.data);
+                break;
+            case "error":
+                console.log("Server-Error: " + sm.data.description);
+                break;
+            default:
+                console.log("Received unkown message.");
+        }
     }
     initiateGame(opponentId) {
         let request = {
@@ -29126,6 +29115,7 @@ class NetCommunicator {
         if (this.state !== ClientState.DISCONNECTED) this.ws.send(request);
     }
     exchangeGameData(gameData) {
+        if (this.state !== ClientState.BUSY) return;
         let request = {
             type: "exchange_game_data",
             id: this.id,
@@ -29134,20 +29124,19 @@ class NetCommunicator {
         };
         this.send(JSON.stringify(request));
     }
-    constructor(){
-        this.endpoint = "wss://18.192.24.53:8080";
-        this.opponentId = -1;
-        this.state = ClientState.DISCONNECTED;
-    }
 }
 exports.default = NetCommunicator;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"5oFJc":[function(require,module,exports) {
 game.Retep = me.Sprite.extend({
-    init: function(x, y, settings) {
-        settings.image = "retep";
-        settings.framewidth = settings.width = 48;
-        settings.frameheight = settings.height = 48;
+    init: function(x, y) {
+        const settings = {
+            image: "retep",
+            framewidth: 48,
+            frameheight: 48,
+            width: 48,
+            height: 48
+        };
         this._super(me.Sprite, 'init', [
             x,
             y,
@@ -29212,7 +29201,7 @@ game.Retep = me.Sprite.extend({
         this.alwaysUpdate = true;
         this.body.collisionType = me.collision.types.PLAYER_OBJECT;
         this.type = "retep";
-        game.retep = this;
+    //game.retep = this;
     },
     onNetworkUpdate: function(data) {
         this.pos.x = data.posX;
@@ -29244,5 +29233,51 @@ game.Retep = me.Sprite.extend({
     }
 });
 
-},{}]},["cNqZK","69epD"], "69epD", "parcelRequireb4f6")
+},{}],"4VBAE":[function(require,module,exports) {
+game.Label = me.Renderable.extend({
+    init: function(x, y, caption) {
+        let settings = {
+            width: 500,
+            height: 500
+        };
+        this._super(me.Renderable, 'init', [
+            0,
+            0,
+            me.game.viewport.width,
+            me.game.viewport.height
+        ]);
+        this.font = new me.BitmapText(0, 0, {
+            font: "PressStart2P",
+            size: 0.5
+        });
+        this.font.textAlign = "right";
+        this.font.textBaseline = "bottom";
+        this.caption = caption;
+        this.alwaysUpdate = true;
+        this.tint.setColor(255, 128, 128);
+    },
+    setCaption: function(caption) {
+        this.caption = caption;
+    },
+    update: function(dt) {
+        this._super(me.Renderable, "update", [
+            dt
+        ]);
+        return true;
+    },
+    setPos: function(posX, posY) {
+        this.pos.x = posX;
+        this.pos.y = posY;
+    },
+    draw: function(renderer) {
+        console.log(this.width + " " + this.height);
+        this.font.draw(renderer, this.caption, 1000, 1000);
+        let color = renderer.getColor();
+        renderer.setColor('#5EFF7E');
+        renderer.fillRect(0, 0, this.width, this.height);
+        renderer.setColor(color);
+    }
+});
+
+},{}]},["5jW0T","69epD"], "69epD", "parcelRequireb4f6")
 

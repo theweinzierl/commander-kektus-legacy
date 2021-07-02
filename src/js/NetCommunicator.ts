@@ -17,49 +17,56 @@ enum ClientState{
 }
 
 class NetCommunicator{
-    endpoint: string = "wss://18.192.24.53:8080";
-    ws: WebSocket;
-    otherPlayers: number[];
-    id: number;
-    opponentId: number = -1;
-    onUpdate: CallableFunction;
-    state: ClientState = ClientState.DISCONNECTED;
+    private endpoint: string = "wss://18.192.24.53:8080";
+    private ws: WebSocket;
+    private otherPlayers: number[];
+    private id: number;
+    private opponentId: number = -1;
+    public onGameDataReceived: CallableFunction = () => {};
+    public onOpponentConnected: CallableFunction = () => {};
+    private state: ClientState = ClientState.DISCONNECTED;
+    private name: string = "";
+
+    constructor(name: string){
+        this.name = name;
+    }
 
     connect(): void {
         this.ws = new WebSocket(this.endpoint);
-        this.ws.onmessage = function (event: any){
-            let sm: ServerResponse = JSON.parse(event.data);
-           // console.log(sm.type);
 
-            switch(sm.type){
-                case "confirmation":
-                    this.id = sm.data.id;
-                    this.state = ClientState.WAITING;
-                case "all_players":
-                    this.otherPlayers = sm.data;
-                    if(this.otherPlayers.length > 1){
-                        if(this.opponentId === -1) this.initiateGame(this.otherPlayers[1]);
-                    }
-                    break;
-                case "initiate_game_confirmation":
-                    this.opponentId = sm.data.opponentId;
-                    console.log("opponent-Id: " + this.opponentId);
-                    break;
-                case "close_game_confirmation":
-                    
-                    break;
-                case "exchange_game_data":
-               //     console.log("Spieldaten empfangen");
-                    this.onUpdate(sm.data);
-                    break;
-                case "error":
-                    console.log("Server-Error: " + sm.data.description);
-                    break;
-                default:
-                    console.log("Received unkown message.");
-            }
-        }.bind(this);     
+        this.ws.onmessage = this.onMessage;   
     };
+
+    private onMessage(event: any): void{
+        let sm: ServerResponse = JSON.parse(event.data);
+
+        switch(sm.type){
+            case "connected_confirmation":
+                this.id = sm.data.id;
+                this.state = ClientState.WAITING;
+
+                let request: ClientMessage = {
+                    type: "id_confirmation",
+                    id: this.id
+                };
+                this.send(JSON.stringify(request));
+
+                break;
+            case "initiate_game_confirmation":
+                this.state = ClientState.BUSY;
+                this.opponentId = sm.data.opponentId;
+                break;
+            case "exchange_game_data":
+                //  console.log("Spieldaten empfangen");
+                this.onGameDataReceived(sm.data);
+                break;
+            case "error":
+                console.log("Server-Error: " + sm.data.description);
+                break;
+            default:
+                console.log("Received unkown message.");
+        }
+    }
 
     initiateGame(opponentId: number):void{
         let request: ClientMessage = {
@@ -70,13 +77,14 @@ class NetCommunicator{
         this.send(JSON.stringify(request));
     }
 
-    send(request: string): void{
+    private send(request: string): void{
         if(this.state !== ClientState.DISCONNECTED){
             this.ws.send(request);
         }
     }
 
     exchangeGameData(gameData?: any): void{
+        if(this.state !== ClientState.BUSY) return;
         let request: ClientMessage = {
             type: "exchange_game_data",
             id: this.id,

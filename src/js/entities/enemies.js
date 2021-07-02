@@ -1,3 +1,4 @@
+
 game.Bloog = me.Sprite.extend({
     init: function (x, y, settings) {
 

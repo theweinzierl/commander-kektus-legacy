@@ -1,3 +1,4 @@
+
 game.PlayerEntity = me.Entity.extend({
 
     init: function (x, y, settings) {
@@ -45,13 +46,23 @@ game.PlayerEntity = me.Entity.extend({
         this.curAnimation = "stand_right";
         this.lastAnimation = "";
         this.updateCounter = 0;
+
+        this.font = new me.BitmapText(0, 0, {font: "PressStart2P", size: 1});
         
+        // this.label = me.game.world.addChild(me.pool.pull("Label", this.pos.x, this.pos.y - 35, game.playerName),10);
+
         game.commander = this;
    
     },
 
+    draw: function(renderer){
+        this._super(me.Entity, 'draw', [renderer]);
+        this.font.draw(renderer, game.playerName, -20, -10);
+    },
+
     update: function (dt) {
-       
+        // this.label.setPos(this.pos.x, this.pos.y);
+
         if(game.mode === "multiplayer"){
             //put onNetUpdate, if you want to limit update rate
             if(this.updateCounter === 0){      

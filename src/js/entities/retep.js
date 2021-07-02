@@ -1,12 +1,14 @@
-
-
 game.Retep = me.Sprite.extend({
 
-    init: function (x, y, settings) {
+    init: function (x, y) {
 
-        settings.image = "retep";
-        settings.framewidth = settings.width = 48;
-        settings.frameheight = settings.height = 48;
+        const settings = {
+            image: "retep",
+            framewidth: 48,
+            frameheight: 48,
+            width: 48,
+            height: 48
+        }
 
         this._super(me.Sprite, 'init', [x, y, settings]);
 
@@ -35,10 +37,9 @@ game.Retep = me.Sprite.extend({
         this.currentAnimation = "stand_right";
         this.alwaysUpdate = true;
 
-
         this.body.collisionType = me.collision.types.PLAYER_OBJECT;
         this.type = "retep";
-        game.retep = this;
+        //game.retep = this;
     },
 
     onNetworkUpdate: function (data){

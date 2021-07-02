@@ -35,9 +35,10 @@ wss.on("connection", function (ws: WebSocketClient) {
 
     // on connect tell client how to identify
     let id: number = registerClient(ws);
+
     ws.send(JSON.stringify(
         {
-            type: "confirmation", 
+            type: "connected_confirmation", 
             data: {id: id}
         }
     ));
@@ -54,8 +55,9 @@ wss.on("connection", function (ws: WebSocketClient) {
                 case "all_players":
                     ws.send(getAllPlayers());
                     break;
-                case "initiate_game_request":
-                    if(cm.opponentId !== undefined && initiateGame(cm.id, cm.opponentId)){
+                case "id_confirmation":
+                    let opponentId: number = getWaitingOpponent();
+                    if(opponentId !== -1 && initiateGame(cm.id, opponentId)){
                       //  ws.send(JSON.stringify({type: "initiate_game_confirmation", data: true}));
                     }else{
                         ws.send(getErrorMessage("Game initiation was not successfull!"));
@@ -81,6 +83,15 @@ wss.on("connection", function (ws: WebSocketClient) {
         closeConnection(ws);
     });
 });
+
+function getWaitingOpponent(): number{
+    for(let [id, client] of curClients){
+        if(client.state === ClientState.WAITING){
+            return id;
+        }
+    }
+    return -1;
+}
 
 function closeConnection(ws: WebSocketClient): void{
     for(let [id, client] of curClients){
@@ -195,10 +206,6 @@ function exchangeGameData(initiatorId: number, opponentId: number, data: any): v
 function getId(): number{
     return idCounter++;
 }
-
-
-
-
 
 wss.on("error", function (e: Error) {
     console.log(e.message);

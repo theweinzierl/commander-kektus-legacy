@@ -80,11 +80,6 @@
     <property name="image" value="commander"/>
    </properties>
   </object>
-  <object id="137" name="Retep" x="33" y="560" width="48" height="48">
-   <properties>
-    <property name="image" value="retep"/>
-   </properties>
-  </object>
   <object id="7" name="Water" x="160" y="624" width="16" height="16">
    <properties>
     <property name="frameWidth" value="16"/>
