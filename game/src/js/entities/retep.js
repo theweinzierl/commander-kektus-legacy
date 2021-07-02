@@ -46,13 +46,13 @@ game.Retep = me.Sprite.extend({
     },
 
     draw: function(renderer){
-        this._super(me.Entity, 'draw', [renderer]);
-        this.font.draw(renderer, this.opponentName, -20, -10);
+        this._super(me.Sprite, 'draw', [renderer]);
+        this.font.draw(renderer, "dfsdf", -20, -10);
     },
 
     onNetworkUpdate: function (data){
         this.pos.x = data.posX;
-        this.pos.y = data.posY + 16;
+        this.pos.y = data.posY;
         this.setMyCurrentAnimation(data.currentAnimation);
     },
 

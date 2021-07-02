@@ -1,3 +1,5 @@
+import { runInThisContext } from "vm";
+
 interface ServerResponse {
     type: string,
     data: any
@@ -22,8 +24,8 @@ class NetCommunicator{
     private otherPlayers: number[];
     private id: number;
     private opponentId: number = -1;
-    public onGameDataReceived: CallableFunction = () => {};
-    public onOpponentConnected: CallableFunction = () => {};
+    public onGameDataReceived: (data: any) => void = () => {};
+    public onOpponentConnected: (name: string) => void = () => {};
     private state: ClientState = ClientState.DISCONNECTED;
     private playerName: string = "";
 
@@ -33,12 +35,12 @@ class NetCommunicator{
 
     connect(): void {
         this.ws = new WebSocket(this.endpoint);
-        this.ws.onmessage = this.onMessage;   
+        this.ws.onmessage = this.onMessage.bind(this);   
     }
 
     private onMessage(event: any): void{
         let sm: ServerResponse = JSON.parse(event.data);
-
+        
         switch(sm.type){
             case "connect_confirmation":
                 this.id = sm.data.id;
@@ -56,6 +58,7 @@ class NetCommunicator{
                 this.state = ClientState.BUSY;
                 this.opponentId = sm.data.opponentId;
                 this.onOpponentConnected(sm.data.opponentName);
+                //this.onGameDataReceived(sm.data);
                 break;
             case "exchange_game_data":
                 this.onGameDataReceived(sm.data);

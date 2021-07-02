@@ -1,5 +1,4 @@
 import me from 'melonjs';
-import NetCommunicator from "./js/NetCommunicator";
 import game from './js/game';
 import resources from './js/resources';
 import title from './js/screens/title';
@@ -23,10 +22,8 @@ me.device.onReady(function onReady() {
     if(nameParam === null) nameParam = "Michael";
 
     if(modeParam !== null && modeParam === "multiplayer"){
-        let netCom = new NetCommunicator(nameParam);
         game.setMode("multiplayer");        
-        game.setPlayerName(nameParam);
-        game.setNetCom(netCom);     
+        game.setPlayerName(nameParam);   
     }else{
         game.setPlayerName(nameParam);
         game.setMode("singleplayer");

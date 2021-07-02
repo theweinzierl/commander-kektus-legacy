@@ -1,3 +1,4 @@
+import NetCommunicator from "./NetCommunicator";
 
 /* Game namespace */
 export default game = {
@@ -13,7 +14,7 @@ export default game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(340, 240, {parent : "screen", scale : "auto", scaleMethod : "flex-width"})) {
+        if (!me.video.init(320, 240, {parent : "screen", scale : "auto", scaleMethod : "flex-width"})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
@@ -55,7 +56,12 @@ export default game = {
         me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
     
         // Start the game.
-        if(this.state === "multiplayer") this.netCom.connect();
+        if(this.mode === "multiplayer"){
+            this.netCom = new NetCommunicator(this.playerName);
+            this.netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
+            this.netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
+            this.netCom.connect();
+        }
         me.state.change(me.state.PLAY);
 
 
@@ -69,10 +75,11 @@ export default game = {
 
     playerName: "",
 
-    onGameDataReceived: function(data){
-        //console.log(data);
+    onGameDataReceived(data){
+        
         if(data !== undefined && this.retep !== null){       
             if(data.entity === "retep"){
+                console.log(data);
              this.retep.onNetworkUpdate(data);
             }else if(data.entity === "retepShot"){
                 me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
@@ -80,19 +87,14 @@ export default game = {
         }
     },
 
-    onOpponentConnected: function(opponentName){
+    onOpponentConnected(opponentName){
         this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0, opponentName));
+        console.log("retep connected");
     },
 
     sendGameData(data){
        if(this.netCom === null) return;
        this.netCom.exchangeGameData(data);
-    },
-
-    setNetCom(netCom){
-        netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
-        netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
-        this.netCom = netCom;
     },
 
     setPlayerName(name){

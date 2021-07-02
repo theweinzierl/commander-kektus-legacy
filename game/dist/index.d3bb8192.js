@@ -384,8 +384,6 @@ function hmrAcceptRun(bundle/*: ParcelRequire */ , id/*: string */ ) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _melonjs = require("melonjs");
 var _melonjsDefault = parcelHelpers.interopDefault(_melonjs);
-var _netCommunicator = require("./js/NetCommunicator");
-var _netCommunicatorDefault = parcelHelpers.interopDefault(_netCommunicator);
 var _game = require("./js/game");
 var _gameDefault = parcelHelpers.interopDefault(_game);
 var _resources = require("./js/resources");
@@ -413,10 +411,7 @@ _melonjsDefault.default.device.onReady(function onReady() {
     if (nameParam === null) nameParam = "Michael";
     if (modeParam !== null && modeParam === "multiplayer") {
         _gameDefault.default.setMode("multiplayer");
-        let netCom = new _netCommunicatorDefault.default(nameParam);
-        netCom.connect();
         _gameDefault.default.setPlayerName(nameParam);
-        _gameDefault.default.setNetCom(netCom);
     } else {
         _gameDefault.default.setPlayerName(nameParam);
         _gameDefault.default.setMode("singleplayer");
@@ -424,7 +419,7 @@ _melonjsDefault.default.device.onReady(function onReady() {
     _gameDefault.default.onload();
 });
 
-},{"melonjs":"2nNa0","./js/NetCommunicator":"5Lm5m","./js/game":"51FYG","./js/resources":"44u4K","./js/screens/title":"jHsGT","./js/screens/play":"4RDpw","./js/entities/enemies":"1Kfnl","./js/entities/hero":"6JfNW","./js/entities/retep":"5oFJc","./js/entities/obstacles":"4Ezvv","./js/entities/goodies":"prN38","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"2nNa0":[function(require,module,exports) {
+},{"melonjs":"2nNa0","./js/game":"51FYG","./js/resources":"44u4K","./js/screens/title":"jHsGT","./js/screens/play":"4RDpw","./js/entities/enemies":"1Kfnl","./js/entities/hero":"6JfNW","./js/entities/retep":"5oFJc","./js/entities/obstacles":"4Ezvv","./js/entities/goodies":"prN38","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"2nNa0":[function(require,module,exports) {
 var global = arguments[3];
 (function() {
     /* eslint-disable no-undef */ (function(global1) {
@@ -27865,6 +27860,126 @@ var global = arguments[3];
     };
 })(); //# sourceMappingURL=melonjs.js.map
 
+},{}],"51FYG":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _netCommunicator = require("./NetCommunicator");
+var _netCommunicatorDefault = parcelHelpers.interopDefault(_netCommunicator);
+exports.default = game = {
+    // an object where to store game information
+    data: {
+        // score
+        score: 0
+    },
+    mode: null,
+    // Run on page load.
+    "onload": function() {
+        // Initialize the video.
+        if (!me.video.init(320, 240, {
+            parent: "screen",
+            scale: "auto",
+            scaleMethod: "flex-width"
+        })) {
+            alert("Your browser does not support HTML5 canvas.");
+            return;
+        }
+        // Initialize the audio.
+        me.audio.init("wav");
+        // set and load all resources.
+        // (this will also automatically switch to the loading screen)
+        me.loader.preload(game.resources, this.loaded.bind(this));
+    },
+    // Run on game resources loaded.
+    "loaded": function() {
+        me.state.set(me.state.PLAY, new game.PlayScreen());
+        // add our player entity in the entity pool
+        me.pool.register("Commander", game.PlayerEntity);
+        me.pool.register("Water", game.Water);
+        me.pool.register("Thorn", game.Thorn);
+        me.pool.register("Torch", game.Torch);
+        me.pool.register("Platform", game.Platform);
+        me.pool.register("LaserBlast", game.LaserBlast);
+        me.pool.register("LaserBlastRetep", game.LaserBlastRetep);
+        me.pool.register("KektusThorn", game.KektusThorn);
+        me.pool.register("Bloog", game.Bloog);
+        me.pool.register("Slug", game.Slug);
+        me.pool.register("Kektus", game.Kektus);
+        me.pool.register("Mushroom", game.Mushroom);
+        me.pool.register("LevelEntity", game.LevelEntity);
+        me.pool.register("Retep", game.Retep);
+        me.input.bindKey(me.input.KEY.LEFT, "left");
+        me.input.bindKey(me.input.KEY.RIGHT, "right");
+        me.input.bindKey(me.input.KEY.UP, "jump", true);
+        me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
+        // Start the game.
+        if (this.mode === "multiplayer") {
+            this.netCom = new _netCommunicatorDefault.default(this.playerName);
+            this.netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
+            this.netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
+            this.netCom.connect();
+        }
+        me.state.change(me.state.PLAY);
+    },
+    netCom: null,
+    commander: null,
+    retep: null,
+    playerName: "",
+    onGameDataReceived (data) {
+        if (data !== undefined && this.retep !== null) {
+            if (data.entity === "retep") {
+                console.log(data);
+                this.retep.onNetworkUpdate(data);
+            } else if (data.entity === "retepShot") me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
+        }
+    },
+    onOpponentConnected (opponentName) {
+        this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0, opponentName));
+        console.log("retep connected");
+    },
+    sendGameData (data) {
+        if (this.netCom === null) return;
+        this.netCom.exchangeGameData(data);
+    },
+    setPlayerName (name) {
+        this.playerName = name;
+    },
+    setMode (mode) {
+        this.mode = mode;
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX","./NetCommunicator":"5Lm5m"}],"4gGoX":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule') return;
+        // Skip duplicate re-exports when they have the same value.
+        if (key in dest && dest[key] === source[key]) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
 },{}],"5Lm5m":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -27889,7 +28004,7 @@ class NetCommunicator {
     }
     connect() {
         this.ws = new WebSocket(this.endpoint);
-        this.ws.onmessage = this.onMessage;
+        this.ws.onmessage = this.onMessage.bind(this);
     }
     onMessage(event) {
         let sm = JSON.parse(event.data);
@@ -27936,121 +28051,6 @@ class NetCommunicator {
     }
 }
 exports.default = NetCommunicator;
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"4gGoX":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule') return;
-        // Skip duplicate re-exports when they have the same value.
-        if (key in dest && dest[key] === source[key]) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"51FYG":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-exports.default = game = {
-    // an object where to store game information
-    data: {
-        // score
-        score: 0
-    },
-    mode: null,
-    // Run on page load.
-    "onload": function() {
-        // Initialize the video.
-        if (!me.video.init(340, 240, {
-            parent: "screen",
-            scale: "auto",
-            scaleMethod: "flex-width"
-        })) {
-            alert("Your browser does not support HTML5 canvas.");
-            return;
-        }
-        // Initialize the audio.
-        me.audio.init("wav");
-        // set and load all resources.
-        // (this will also automatically switch to the loading screen)
-        me.loader.preload(game.resources, this.loaded.bind(this));
-    },
-    // Run on game resources loaded.
-    "loaded": function() {
-        me.state.set(me.state.PLAY, new game.PlayScreen());
-        // add our player entity in the entity pool
-        me.pool.register("Commander", game.PlayerEntity);
-        me.pool.register("Water", game.Water);
-        me.pool.register("Thorn", game.Thorn);
-        me.pool.register("Torch", game.Torch);
-        me.pool.register("Platform", game.Platform);
-        me.pool.register("LaserBlast", game.LaserBlast);
-        me.pool.register("LaserBlastRetep", game.LaserBlastRetep);
-        me.pool.register("KektusThorn", game.KektusThorn);
-        me.pool.register("Bloog", game.Bloog);
-        me.pool.register("Slug", game.Slug);
-        me.pool.register("Kektus", game.Kektus);
-        me.pool.register("Mushroom", game.Mushroom);
-        me.pool.register("LevelEntity", game.LevelEntity);
-        me.pool.register("Retep", game.Retep);
-        me.input.bindKey(me.input.KEY.LEFT, "left");
-        me.input.bindKey(me.input.KEY.RIGHT, "right");
-        me.input.bindKey(me.input.KEY.UP, "jump", true);
-        me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
-        // Start the game.
-        me.state.change(me.state.PLAY);
-    },
-    netCom: null,
-    commander: null,
-    retep: null,
-    playerName: "",
-    onGameDataReceived: function(data) {
-        //console.log(data);
-        if (data !== undefined && this.retep !== null) {
-            if (data.entity === "retep") this.retep.onNetworkUpdate(data);
-            else if (data.entity === "retepShot") me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
-        }
-    },
-    onOpponentConnected: function(opponentName) {
-        this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0, opponentName));
-    },
-    sendGameData (data) {
-        if (this.netCom === null) return;
-        this.netCom.exchangeGameData(data);
-    },
-    setNetCom (netCom) {
-        netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
-        netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
-        this.netCom = netCom;
-    },
-    setPlayerName (name) {
-        this.playerName = name;
-    },
-    setMode (mode) {
-        this.mode = mode;
-    }
-};
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"44u4K":[function(require,module,exports) {
 game.resources = [
@@ -29093,14 +29093,14 @@ game.Retep = me.Sprite.extend({
         this.type = "retep";
     },
     draw: function(renderer) {
-        this._super(me.Entity, 'draw', [
+        this._super(me.Sprite, 'draw', [
             renderer
         ]);
-        this.font.draw(renderer, this.opponentName, -20, -10);
+        this.font.draw(renderer, "dfsdf", -20, -10);
     },
     onNetworkUpdate: function(data) {
         this.pos.x = data.posX;
-        this.pos.y = data.posY + 16;
+        this.pos.y = data.posY;
         this.setMyCurrentAnimation(data.currentAnimation);
     },
     setMyCurrentAnimation: function(animation) {
