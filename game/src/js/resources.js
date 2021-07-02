@@ -1,6 +1,6 @@
 game.resources = [
-    { name: "PressStart2P", type:"image", src: "data/fnt/arial.png" },
-    { name: "PressStart2P", type:"binary", src: "data/fnt/arial.fnt"},
+    { name: "Arial", type:"image", src: "data/fnt/arial.png" },
+    { name: "Arial", type:"binary", src: "data/fnt/arial.fnt"},
     {
         "name": "walk",
         "type": "audio",

@@ -47,7 +47,6 @@ export default game = {
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
-        me.pool.register("Label", game.Label);
 
         if(this.mode === "multiplayer"){
             me.pool.register("Retep", game.Retep);

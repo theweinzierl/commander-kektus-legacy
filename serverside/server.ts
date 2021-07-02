@@ -1,4 +1,4 @@
-import {WebSocketClient, WebSocketServer } from "./deno-websocket/mod.ts";
+import {WebSocketClient, WebSocketServer } from "./deno-websocket/mod";
 
 
 interface ClientMessage {
@@ -38,13 +38,10 @@ wss.on("connection", function (ws: WebSocketClient) {
 
     ws.send(JSON.stringify(
         {
-            type: "connected_confirmation", 
+            type: "connect_confirmation", 
             data: {id: id}
         }
     ));
-
-    // broadcast new players-list
-    broadcastAllPlayers();
 
     // register events
     ws.on("message", 
@@ -147,13 +144,11 @@ function getErrorMessage(msg: string): string{
 
 function initiateGame(initiatorId: number, opponentId: number): boolean{
     if(initiatorId === opponentId) return false;
-    if(!curClients.has(initiatorId) || !curClients.has(opponentId)) return false;
 
     let initiator: Client | undefined = curClients.get(initiatorId);
     let opponent: Client | undefined = curClients.get(opponentId);
     
     if(initiator === undefined || opponent === undefined) return false;
-
     if(opponent.state === ClientState.BUSY || initiator.state === ClientState.BUSY) return false;
 
     initiator.state = ClientState.BUSY;
@@ -162,20 +157,19 @@ function initiateGame(initiatorId: number, opponentId: number): boolean{
     initiator.opponent = opponent;
     opponent.opponent = initiator;
 
-    initiator.ws.send(JSON.stringify({type: "initiate_game_confirmation", data: {opponentId: opponent.id}}));
-    opponent.ws.send(JSON.stringify({type: "initiate_game_confirmation", data: {opponentId: initiator.id}}));
+    initiator.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: opponent.id}}));
+    opponent.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: initiator.id}}));
     return true;
 }
 
 function closeGame(initiatorId: number, opponentId: number): boolean{
     if(initiatorId === opponentId) return false;
-    if(!curClients.has(initiatorId) || !curClients.has(opponentId)) return false;
 
     let initiator: Client | undefined = curClients.get(initiatorId);
     let opponent: Client | undefined = curClients.get(opponentId);
 
     if(initiator === undefined || opponent === undefined) return false;
-    if(opponent.opponent!.id !== initiatorId || initiator.opponent!.id !== opponentId) return false;    
+    if(opponent.opponent!.id !== initiatorId || initiator.opponent!.id !== opponentId) return;  
     if(opponent.state === ClientState.WAITING || initiator.state === ClientState.WAITING) return false;
 
     initiator.state = ClientState.WAITING;
@@ -189,9 +183,7 @@ function closeGame(initiatorId: number, opponentId: number): boolean{
 }
 
 function exchangeGameData(initiatorId: number, opponentId: number, data: any): void{
-    console.log("hello game data exchande!");
     if(initiatorId === opponentId) return;
-    if(!curClients.has(initiatorId) || !curClients.has(opponentId)) return;
 
     let initiator: Client | undefined = curClients.get(initiatorId);
     let opponent: Client | undefined = curClients.get(opponentId);

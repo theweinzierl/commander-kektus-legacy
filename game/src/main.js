@@ -2,7 +2,6 @@ import me from 'melonjs';
 import NetCommunicator from "./js/NetCommunicator";
 import game from './js/game';
 import resources from './js/resources';
-import controls from './js/entities/controls';
 import title from './js/screens/title';
 import play from './js/screens/play';
 import enemies from './js/entities/enemies';

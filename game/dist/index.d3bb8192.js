@@ -390,8 +390,6 @@ var _game = require("./js/game");
 var _gameDefault = parcelHelpers.interopDefault(_game);
 var _resources = require("./js/resources");
 var _resourcesDefault = parcelHelpers.interopDefault(_resources);
-var _controls = require("./js/entities/controls");
-var _controlsDefault = parcelHelpers.interopDefault(_controls);
 var _title = require("./js/screens/title");
 var _titleDefault = parcelHelpers.interopDefault(_title);
 var _play = require("./js/screens/play");
@@ -425,7 +423,7 @@ _melonjsDefault.default.device.onReady(function onReady() {
     _gameDefault.default.onload();
 });
 
-},{"melonjs":"2nNa0","./js/game":"51FYG","./js/resources":"44u4K","./js/screens/title":"jHsGT","./js/screens/play":"4RDpw","./js/entities/enemies":"1Kfnl","./js/entities/hero":"6JfNW","./js/entities/obstacles":"4Ezvv","./js/entities/goodies":"prN38","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX","./js/NetCommunicator":"7kLUw","./js/entities/retep":"5oFJc","./js/entities/controls":"4VBAE"}],"2nNa0":[function(require,module,exports) {
+},{"melonjs":"2nNa0","./js/NetCommunicator":"5Lm5m","./js/game":"51FYG","./js/resources":"44u4K","./js/screens/title":"jHsGT","./js/screens/play":"4RDpw","./js/entities/enemies":"1Kfnl","./js/entities/hero":"6JfNW","./js/entities/retep":"5oFJc","./js/entities/obstacles":"4Ezvv","./js/entities/goodies":"prN38","@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"2nNa0":[function(require,module,exports) {
 var global = arguments[3];
 (function() {
     /* eslint-disable no-undef */ (function(global1) {
@@ -27866,6 +27864,115 @@ var global = arguments[3];
     };
 })(); //# sourceMappingURL=melonjs.js.map
 
+},{}],"5Lm5m":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var ClientState;
+(function(ClientState1) {
+    ClientState1[ClientState1["DISCONNECTED"] = 0] = "DISCONNECTED";
+    ClientState1[ClientState1["WAITING"] = 1] = "WAITING";
+    ClientState1[ClientState1["BUSY"] = 2] = "BUSY";
+})(ClientState || (ClientState = {
+}));
+class NetCommunicator {
+    constructor(name){
+        this.endpoint = "wss://18.192.24.53:8080";
+        this.opponentId = -1;
+        this.onGameDataReceived = ()=>{
+        };
+        this.onOpponentConnected = ()=>{
+        };
+        this.state = ClientState.DISCONNECTED;
+        this.name = "";
+        this.name = name;
+    }
+    connect() {
+        this.ws = new WebSocket(this.endpoint);
+        this.ws.onmessage = this.onMessage;
+    }
+    onMessage(event) {
+        let sm = JSON.parse(event.data);
+        switch(sm.type){
+            case "connected_confirmation":
+                this.id = sm.data.id;
+                this.state = ClientState.WAITING;
+                let request = {
+                    type: "id_confirmation",
+                    id: this.id
+                };
+                this.send(JSON.stringify(request));
+                break;
+            case "initiate_game_confirmation":
+                this.state = ClientState.BUSY;
+                this.opponentId = sm.data.opponentId;
+                break;
+            case "exchange_game_data":
+                //  console.log("Spieldaten empfangen");
+                this.onGameDataReceived(sm.data);
+                break;
+            case "error":
+                console.log("Server-Error: " + sm.data.description);
+                break;
+            default:
+                console.log("Received unkown message.");
+        }
+    }
+    initiateGame(opponentId) {
+        let request = {
+            type: "initiate_game_request",
+            id: this.id,
+            opponentId: opponentId
+        };
+        this.send(JSON.stringify(request));
+    }
+    send(request) {
+        if (this.state !== ClientState.DISCONNECTED) this.ws.send(request);
+    }
+    exchangeGameData(gameData) {
+        if (this.state !== ClientState.BUSY) return;
+        let request = {
+            type: "exchange_game_data",
+            id: this.id,
+            opponentId: this.opponentId,
+            data: gameData
+        };
+        this.send(JSON.stringify(request));
+    }
+}
+exports.default = NetCommunicator;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"4gGoX":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule') return;
+        // Skip duplicate re-exports when they have the same value.
+        if (key in dest && dest[key] === source[key]) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
 },{}],"51FYG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -27910,7 +28017,6 @@ exports.default = game = {
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
-        me.pool.register("Label", game.Label);
         if (this.mode === "multiplayer") {
             me.pool.register("Retep", game.Retep);
             this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0));
@@ -27949,47 +28055,15 @@ exports.default = game = {
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"4gGoX":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule') return;
-        // Skip duplicate re-exports when they have the same value.
-        if (key in dest && dest[key] === source[key]) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"44u4K":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"44u4K":[function(require,module,exports) {
 game.resources = [
     {
-        name: "PressStart2P",
+        name: "Arial",
         type: "image",
         src: "data/fnt/arial.png"
     },
     {
-        name: "PressStart2P",
+        name: "Arial",
         type: "binary",
         src: "data/fnt/arial.fnt"
     },
@@ -28628,10 +28702,9 @@ game.PlayerEntity = me.Entity.extend({
         this.lastAnimation = "";
         this.updateCounter = 0;
         this.font = new me.BitmapText(0, 0, {
-            font: "PressStart2P",
+            font: "Arial",
             size: 1
         });
-        // this.label = me.game.world.addChild(me.pool.pull("Label", this.pos.x, this.pos.y - 35, game.playerName),10);
         game.commander = this;
     },
     draw: function(renderer) {
@@ -28641,7 +28714,6 @@ game.PlayerEntity = me.Entity.extend({
         this.font.draw(renderer, game.playerName, -20, -10);
     },
     update: function(dt) {
-        // this.label.setPos(this.pos.x, this.pos.y);
         if (game.mode === "multiplayer") {
             //put onNetUpdate, if you want to limit update rate
             if (this.updateCounter === 0) {
@@ -28943,6 +29015,112 @@ game.LaserBlastRetep = me.Entity.extend({
     }
 });
 
+},{}],"5oFJc":[function(require,module,exports) {
+game.Retep = me.Sprite.extend({
+    init: function(x, y) {
+        const settings = {
+            image: "retep",
+            framewidth: 48,
+            frameheight: 48,
+            width: 48,
+            height: 48
+        };
+        this._super(me.Sprite, 'init', [
+            x,
+            y,
+            settings
+        ]);
+        this.body = new me.Body(this);
+        this.body.addShape(new me.Rect(0, 16, 16, 48));
+        this.isKinematic = false;
+        this.addAnimation("walk_left", [
+            0,
+            3
+        ]);
+        this.addAnimation("walk_right", [
+            4,
+            7
+        ]);
+        this.addAnimation("jump_left", [
+            8
+        ]);
+        this.addAnimation("jump_right", [
+            11
+        ]);
+        this.addAnimation("fall_left", [
+            9,
+            10
+        ], 200);
+        this.addAnimation("fall_right", [
+            11,
+            12,
+            200
+        ]);
+        this.addAnimation("stand_left", [
+            27
+        ]);
+        this.addAnimation("stand_right", [
+            28
+        ]);
+        this.addAnimation("shoot_walk_right", [
+            19
+        ], 120);
+        this.addAnimation("shoot_walk_left", [
+            14
+        ], 120);
+        this.addAnimation("shoot_jump_right", [
+            20
+        ], 120);
+        this.addAnimation("shoot_jump_left", [
+            15
+        ], 120);
+        this.addAnimation("surf", [
+            29
+        ]);
+        this.addAnimation("die", [
+            25,
+            26
+        ], 200);
+        this.addAnimation("freeze", [
+            30
+        ], 500);
+        this.setCurrentAnimation("stand_right");
+        this.currentAnimation = "stand_right";
+        this.alwaysUpdate = true;
+        this.body.collisionType = me.collision.types.PLAYER_OBJECT;
+        this.type = "retep";
+    //game.retep = this;
+    },
+    onNetworkUpdate: function(data) {
+        this.pos.x = data.posX;
+        this.pos.y = data.posY + 16;
+        this.setMyCurrentAnimation(data.currentAnimation);
+    },
+    setMyCurrentAnimation: function(animation) {
+        if (animation !== this.currentAnimation) {
+            this.currentAnimation = animation;
+            this.setCurrentAnimation(this.currentAnimation);
+        }
+    },
+    update: function(dt) {
+        this._super(me.Sprite, "update", [
+            dt
+        ]);
+        me.collision.check(this);
+        return true;
+    },
+    onCollision: function(response, other) {
+        /*
+        if(other.body.collisionType === me.collision.types.PLAYER_OBJECT){
+            return false;
+        }else if(other.body.collisionType === me.collision.types.PROJECTILE_OBJECT){
+            return false;
+        }
+       // return true;
+       */ return false;
+    }
+});
+
 },{}],"4Ezvv":[function(require,module,exports) {
 game.Water = me.Entity.extend({
     init: function(x, y, settings) {
@@ -29049,235 +29227,6 @@ game.LevelEntity = me.LevelEntity.extend({
 });
 
 },{}],"prN38":[function(require,module,exports) {
-
-},{}],"7kLUw":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var ClientState;
-(function(ClientState1) {
-    ClientState1[ClientState1["DISCONNECTED"] = 0] = "DISCONNECTED";
-    ClientState1[ClientState1["WAITING"] = 1] = "WAITING";
-    ClientState1[ClientState1["BUSY"] = 2] = "BUSY";
-})(ClientState || (ClientState = {
-}));
-class NetCommunicator {
-    constructor(name){
-        this.endpoint = "wss://18.192.24.53:8080";
-        this.opponentId = -1;
-        this.onGameDataReceived = ()=>{
-        };
-        this.onOpponentConnected = ()=>{
-        };
-        this.state = ClientState.DISCONNECTED;
-        this.name = "";
-        this.name = name;
-    }
-    connect() {
-        this.ws = new WebSocket(this.endpoint);
-        this.ws.onmessage = this.onMessage;
-    }
-    onMessage(event) {
-        let sm = JSON.parse(event.data);
-        switch(sm.type){
-            case "connected_confirmation":
-                this.id = sm.data.id;
-                this.state = ClientState.WAITING;
-                let request = {
-                    type: "id_confirmation",
-                    id: this.id
-                };
-                this.send(JSON.stringify(request));
-                break;
-            case "initiate_game_confirmation":
-                this.state = ClientState.BUSY;
-                this.opponentId = sm.data.opponentId;
-                break;
-            case "exchange_game_data":
-                //  console.log("Spieldaten empfangen");
-                this.onGameDataReceived(sm.data);
-                break;
-            case "error":
-                console.log("Server-Error: " + sm.data.description);
-                break;
-            default:
-                console.log("Received unkown message.");
-        }
-    }
-    initiateGame(opponentId) {
-        let request = {
-            type: "initiate_game_request",
-            id: this.id,
-            opponentId: opponentId
-        };
-        this.send(JSON.stringify(request));
-    }
-    send(request) {
-        if (this.state !== ClientState.DISCONNECTED) this.ws.send(request);
-    }
-    exchangeGameData(gameData) {
-        if (this.state !== ClientState.BUSY) return;
-        let request = {
-            type: "exchange_game_data",
-            id: this.id,
-            opponentId: this.opponentId,
-            data: gameData
-        };
-        this.send(JSON.stringify(request));
-    }
-}
-exports.default = NetCommunicator;
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"4gGoX"}],"5oFJc":[function(require,module,exports) {
-game.Retep = me.Sprite.extend({
-    init: function(x, y) {
-        const settings = {
-            image: "retep",
-            framewidth: 48,
-            frameheight: 48,
-            width: 48,
-            height: 48
-        };
-        this._super(me.Sprite, 'init', [
-            x,
-            y,
-            settings
-        ]);
-        this.body = new me.Body(this);
-        this.body.addShape(new me.Rect(0, 16, 16, 48));
-        this.isKinematic = false;
-        this.addAnimation("walk_left", [
-            0,
-            3
-        ]);
-        this.addAnimation("walk_right", [
-            4,
-            7
-        ]);
-        this.addAnimation("jump_left", [
-            8
-        ]);
-        this.addAnimation("jump_right", [
-            11
-        ]);
-        this.addAnimation("fall_left", [
-            9,
-            10
-        ], 200);
-        this.addAnimation("fall_right", [
-            11,
-            12,
-            200
-        ]);
-        this.addAnimation("stand_left", [
-            27
-        ]);
-        this.addAnimation("stand_right", [
-            28
-        ]);
-        this.addAnimation("shoot_walk_right", [
-            19
-        ], 120);
-        this.addAnimation("shoot_walk_left", [
-            14
-        ], 120);
-        this.addAnimation("shoot_jump_right", [
-            20
-        ], 120);
-        this.addAnimation("shoot_jump_left", [
-            15
-        ], 120);
-        this.addAnimation("surf", [
-            29
-        ]);
-        this.addAnimation("die", [
-            25,
-            26
-        ], 200);
-        this.addAnimation("freeze", [
-            30
-        ], 500);
-        this.setCurrentAnimation("stand_right");
-        this.currentAnimation = "stand_right";
-        this.alwaysUpdate = true;
-        this.body.collisionType = me.collision.types.PLAYER_OBJECT;
-        this.type = "retep";
-    //game.retep = this;
-    },
-    onNetworkUpdate: function(data) {
-        this.pos.x = data.posX;
-        this.pos.y = data.posY + 16;
-        this.setMyCurrentAnimation(data.currentAnimation);
-    },
-    setMyCurrentAnimation: function(animation) {
-        if (animation !== this.currentAnimation) {
-            this.currentAnimation = animation;
-            this.setCurrentAnimation(this.currentAnimation);
-        }
-    },
-    update: function(dt) {
-        this._super(me.Sprite, "update", [
-            dt
-        ]);
-        me.collision.check(this);
-        return true;
-    },
-    onCollision: function(response, other) {
-        /*
-        if(other.body.collisionType === me.collision.types.PLAYER_OBJECT){
-            return false;
-        }else if(other.body.collisionType === me.collision.types.PROJECTILE_OBJECT){
-            return false;
-        }
-       // return true;
-       */ return false;
-    }
-});
-
-},{}],"4VBAE":[function(require,module,exports) {
-game.Label = me.Renderable.extend({
-    init: function(x, y, caption) {
-        let settings = {
-            width: 500,
-            height: 500
-        };
-        this._super(me.Renderable, 'init', [
-            0,
-            0,
-            me.game.viewport.width,
-            me.game.viewport.height
-        ]);
-        this.font = new me.BitmapText(0, 0, {
-            font: "PressStart2P",
-            size: 0.5
-        });
-        this.font.textAlign = "right";
-        this.font.textBaseline = "bottom";
-        this.caption = caption;
-        this.alwaysUpdate = true;
-        this.tint.setColor(255, 128, 128);
-    },
-    setCaption: function(caption) {
-        this.caption = caption;
-    },
-    update: function(dt) {
-        this._super(me.Renderable, "update", [
-            dt
-        ]);
-        return true;
-    },
-    setPos: function(posX, posY) {
-        this.pos.x = posX;
-        this.pos.y = posY;
-    },
-    draw: function(renderer) {
-        console.log(this.width + " " + this.height);
-        this.font.draw(renderer, this.caption, 1000, 1000);
-        let color = renderer.getColor();
-        renderer.setColor('#5EFF7E');
-        renderer.fillRect(0, 0, this.width, this.height);
-        renderer.setColor(color);
-    }
-});
 
 },{}]},["5jW0T","69epD"], "69epD", "parcelRequireb4f6")
 
