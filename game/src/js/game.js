@@ -55,7 +55,9 @@ export default game = {
         me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
     
         // Start the game.
+        if(this.state === "multiplayer") this.netCom.connect();
         me.state.change(me.state.PLAY);
+
 
     },
 

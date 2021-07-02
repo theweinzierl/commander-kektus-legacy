@@ -23,11 +23,10 @@ me.device.onReady(function onReady() {
     if(nameParam === null) nameParam = "Michael";
 
     if(modeParam !== null && modeParam === "multiplayer"){
-        game.setMode("multiplayer");
         let netCom = new NetCommunicator(nameParam);
-        netCom.connect();
+        game.setMode("multiplayer");        
         game.setPlayerName(nameParam);
-        game.setNetCom(netCom);
+        game.setNetCom(netCom);     
     }else{
         game.setPlayerName(nameParam);
         game.setMode("singleplayer");
