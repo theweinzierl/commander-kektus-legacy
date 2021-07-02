@@ -25,39 +25,39 @@ class NetCommunicator{
     public onGameDataReceived: CallableFunction = () => {};
     public onOpponentConnected: CallableFunction = () => {};
     private state: ClientState = ClientState.DISCONNECTED;
-    private name: string = "";
+    private playerName: string = "";
 
-    constructor(name: string){
-        this.name = name;
+    constructor(playerName: string){
+        this.playerName = playerName;
     }
 
     connect(): void {
         this.ws = new WebSocket(this.endpoint);
-
         this.ws.onmessage = this.onMessage;   
-    };
+    }
 
     private onMessage(event: any): void{
         let sm: ServerResponse = JSON.parse(event.data);
 
         switch(sm.type){
-            case "connected_confirmation":
+            case "connect_confirmation":
                 this.id = sm.data.id;
                 this.state = ClientState.WAITING;
 
                 let request: ClientMessage = {
                     type: "id_confirmation",
-                    id: this.id
+                    id: this.id,
+                    data: {playerName: this.playerName}
                 };
                 this.send(JSON.stringify(request));
 
                 break;
-            case "initiate_game_confirmation":
+            case "initiate_confirmation":
                 this.state = ClientState.BUSY;
                 this.opponentId = sm.data.opponentId;
+                this.onOpponentConnected(sm.data.opponentName);
                 break;
             case "exchange_game_data":
-                //  console.log("Spieldaten empfangen");
                 this.onGameDataReceived(sm.data);
                 break;
             case "error":
@@ -66,15 +66,6 @@ class NetCommunicator{
             default:
                 console.log("Received unkown message.");
         }
-    }
-
-    initiateGame(opponentId: number):void{
-        let request: ClientMessage = {
-            type: "initiate_game_request",
-            id: this.id,
-            opponentId: opponentId
-        };
-        this.send(JSON.stringify(request));
     }
 
     private send(request: string): void{

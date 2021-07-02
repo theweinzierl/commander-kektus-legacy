@@ -1,6 +1,6 @@
 game.Retep = me.Sprite.extend({
 
-    init: function (x, y) {
+    init: function (x, y, opponentName) {
 
         const settings = {
             image: "retep",
@@ -37,9 +37,17 @@ game.Retep = me.Sprite.extend({
         this.currentAnimation = "stand_right";
         this.alwaysUpdate = true;
 
+        this.opponentName = opponentName;
+        this.font = new me.BitmapText(0, 0, {font: "Arial", size: 1});
+
         this.body.collisionType = me.collision.types.PLAYER_OBJECT;
         this.type = "retep";
-        //game.retep = this;
+
+    },
+
+    draw: function(renderer){
+        this._super(me.Entity, 'draw', [renderer]);
+        this.font.draw(renderer, this.opponentName, -20, -10);
     },
 
     onNetworkUpdate: function (data){

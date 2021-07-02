@@ -140,10 +140,10 @@
       this[globalName] = mainExports;
     }
   }
-})({"5jW0T":[function(require,module,exports) {
+})({"cNqZK":[function(require,module,exports) {
 var HMR_HOST = null;
 var HMR_PORT = null;
-var HMR_SECURE = false;
+var HMR_SECURE = true;
 var HMR_ENV_HASH = "d751713988987e9331980363e24189ce";
 module.bundle.HMR_BUNDLE_ID = "ad8f65809b71f8b056dc8bc4d3bb8192"; // @flow
 /* global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE */ /*::
@@ -415,6 +415,7 @@ _melonjsDefault.default.device.onReady(function onReady() {
         _gameDefault.default.setMode("multiplayer");
         let netCom = new _netCommunicatorDefault.default(nameParam);
         netCom.connect();
+        _gameDefault.default.setPlayerName(nameParam);
         _gameDefault.default.setNetCom(netCom);
     } else {
         _gameDefault.default.setPlayerName(nameParam);
@@ -27875,7 +27876,7 @@ var ClientState;
 })(ClientState || (ClientState = {
 }));
 class NetCommunicator {
-    constructor(name){
+    constructor(playerName){
         this.endpoint = "wss://18.192.24.53:8080";
         this.opponentId = -1;
         this.onGameDataReceived = ()=>{
@@ -27883,8 +27884,8 @@ class NetCommunicator {
         this.onOpponentConnected = ()=>{
         };
         this.state = ClientState.DISCONNECTED;
-        this.name = "";
-        this.name = name;
+        this.playerName = "";
+        this.playerName = playerName;
     }
     connect() {
         this.ws = new WebSocket(this.endpoint);
@@ -27893,21 +27894,24 @@ class NetCommunicator {
     onMessage(event) {
         let sm = JSON.parse(event.data);
         switch(sm.type){
-            case "connected_confirmation":
+            case "connect_confirmation":
                 this.id = sm.data.id;
                 this.state = ClientState.WAITING;
                 let request = {
                     type: "id_confirmation",
-                    id: this.id
+                    id: this.id,
+                    data: {
+                        playerName: this.playerName
+                    }
                 };
                 this.send(JSON.stringify(request));
                 break;
-            case "initiate_game_confirmation":
+            case "initiate_confirmation":
                 this.state = ClientState.BUSY;
                 this.opponentId = sm.data.opponentId;
+                this.onOpponentConnected(sm.data.opponentName);
                 break;
             case "exchange_game_data":
-                //  console.log("Spieldaten empfangen");
                 this.onGameDataReceived(sm.data);
                 break;
             case "error":
@@ -27916,14 +27920,6 @@ class NetCommunicator {
             default:
                 console.log("Received unkown message.");
         }
-    }
-    initiateGame(opponentId) {
-        let request = {
-            type: "initiate_game_request",
-            id: this.id,
-            opponentId: opponentId
-        };
-        this.send(JSON.stringify(request));
     }
     send(request) {
         if (this.state !== ClientState.DISCONNECTED) this.ws.send(request);
@@ -28017,10 +28013,7 @@ exports.default = game = {
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
-        if (this.mode === "multiplayer") {
-            me.pool.register("Retep", game.Retep);
-            this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0));
-        }
+        me.pool.register("Retep", game.Retep);
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP, "jump", true);
@@ -28039,12 +28032,16 @@ exports.default = game = {
             else if (data.entity === "retepShot") me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
         }
     },
+    onOpponentConnected: function(opponentName) {
+        this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0, opponentName));
+    },
     sendGameData (data) {
         if (this.netCom === null) return;
         this.netCom.exchangeGameData(data);
     },
     setNetCom (netCom) {
         netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
+        netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
         this.netCom = netCom;
     },
     setPlayerName (name) {
@@ -29017,7 +29014,7 @@ game.LaserBlastRetep = me.Entity.extend({
 
 },{}],"5oFJc":[function(require,module,exports) {
 game.Retep = me.Sprite.extend({
-    init: function(x, y) {
+    init: function(x, y, opponentName) {
         const settings = {
             image: "retep",
             framewidth: 48,
@@ -29087,9 +29084,19 @@ game.Retep = me.Sprite.extend({
         this.setCurrentAnimation("stand_right");
         this.currentAnimation = "stand_right";
         this.alwaysUpdate = true;
+        this.opponentName = opponentName;
+        this.font = new me.BitmapText(0, 0, {
+            font: "Arial",
+            size: 1
+        });
         this.body.collisionType = me.collision.types.PLAYER_OBJECT;
         this.type = "retep";
-    //game.retep = this;
+    },
+    draw: function(renderer) {
+        this._super(me.Entity, 'draw', [
+            renderer
+        ]);
+        this.font.draw(renderer, this.opponentName, -20, -10);
     },
     onNetworkUpdate: function(data) {
         this.pos.x = data.posX;
@@ -29228,5 +29235,5 @@ game.LevelEntity = me.LevelEntity.extend({
 
 },{}],"prN38":[function(require,module,exports) {
 
-},{}]},["5jW0T","69epD"], "69epD", "parcelRequireb4f6")
+},{}]},["cNqZK","69epD"], "69epD", "parcelRequireb4f6")
 

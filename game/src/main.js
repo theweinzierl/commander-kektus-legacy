@@ -26,6 +26,7 @@ me.device.onReady(function onReady() {
         game.setMode("multiplayer");
         let netCom = new NetCommunicator(nameParam);
         netCom.connect();
+        game.setPlayerName(nameParam);
         game.setNetCom(netCom);
     }else{
         game.setPlayerName(nameParam);

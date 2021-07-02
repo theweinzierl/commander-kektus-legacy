@@ -16,6 +16,7 @@ interface ServerResponse {
 interface Client {
     id: number,
     ws: WebSocketClient,
+    playerName?: string;
     opponent?: Client,
     state: ClientState
 }
@@ -53,6 +54,7 @@ wss.on("connection", function (ws: WebSocketClient) {
                     ws.send(getAllPlayers());
                     break;
                 case "id_confirmation":
+                    setPlayerName(cm.id, cm.data.playerName);
                     let opponentId: number = getWaitingOpponent();
                     if(opponentId !== -1 && initiateGame(cm.id, opponentId)){
                       //  ws.send(JSON.stringify({type: "initiate_game_confirmation", data: true}));
@@ -80,6 +82,13 @@ wss.on("connection", function (ws: WebSocketClient) {
         closeConnection(ws);
     });
 });
+
+function setPlayerName(clientId: number, playerName: string | null): void{
+    let client: Client | undefined = curClients.get(clientId);
+    if(client === undefined) return;
+    let checkedPlayerName: string = playerName ? playerName : ("Player_" + clientId);
+    client.playerName = checkedPlayerName;
+}
 
 function getWaitingOpponent(): number{
     for(let [id, client] of curClients){
@@ -157,8 +166,8 @@ function initiateGame(initiatorId: number, opponentId: number): boolean{
     initiator.opponent = opponent;
     opponent.opponent = initiator;
 
-    initiator.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: opponent.id}}));
-    opponent.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: initiator.id}}));
+    initiator.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: opponent.id, opponentName: opponent.playerName}}));
+    opponent.ws.send(JSON.stringify({type: "initiate_confirmation", data: {opponentId: initiator.id, opponentName: opponent.playerName}}));
     return true;
 }
 

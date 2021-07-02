@@ -47,11 +47,7 @@ export default game = {
         me.pool.register("Kektus", game.Kektus);
         me.pool.register("Mushroom", game.Mushroom);
         me.pool.register("LevelEntity", game.LevelEntity);
-
-        if(this.mode === "multiplayer"){
-            me.pool.register("Retep", game.Retep);
-            this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0));
-        }
+        me.pool.register("Retep", game.Retep);
 
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
@@ -82,6 +78,10 @@ export default game = {
         }
     },
 
+    onOpponentConnected: function(opponentName){
+        this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0, opponentName));
+    },
+
     sendGameData(data){
        if(this.netCom === null) return;
        this.netCom.exchangeGameData(data);
@@ -89,6 +89,7 @@ export default game = {
 
     setNetCom(netCom){
         netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
+        netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
         this.netCom = netCom;
     },
 

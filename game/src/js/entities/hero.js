@@ -60,6 +60,7 @@ game.PlayerEntity = me.Entity.extend({
 
     update: function (dt) {
 
+
         if(game.mode === "multiplayer"){
             //put onNetUpdate, if you want to limit update rate
             if(this.updateCounter === 0){      
