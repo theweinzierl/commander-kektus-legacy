@@ -1,4 +1,4 @@
-game.Retep = me.Sprite.extend({
+game.Retep = me.Entity.extend({
 
     init: function (x, y, opponentName) {
 
@@ -10,30 +10,29 @@ game.Retep = me.Sprite.extend({
             height: 48
         }
 
-        this._super(me.Sprite, 'init', [x, y, settings]);
-
-        this.body = new me.Body(this);
+        this._super(me.Entity, 'init', [x, y, settings]);
+        this.body.removeShapeAt(0);
         this.body.addShape(new me.Rect(0, 16, 16, 48));
 
         this.isKinematic = false;
 
-        this.addAnimation("walk_left", [0, 3]);
-        this.addAnimation("walk_right", [4, 7]);
-        this.addAnimation("jump_left", [8]);
-        this.addAnimation("jump_right", [11]);
-        this.addAnimation("fall_left", [9, 10], 200);
-        this.addAnimation("fall_right", [11, 12, 200]);
-        this.addAnimation("stand_left", [27]);
-        this.addAnimation("stand_right", [28]);
-        this.addAnimation("shoot_walk_right", [19], 120);
-        this.addAnimation("shoot_walk_left", [14], 120);
-        this.addAnimation("shoot_jump_right", [20], 120);
-        this.addAnimation("shoot_jump_left", [15], 120);
-        this.addAnimation("surf", [29]);
-        this.addAnimation("die", [25, 26], 200);
-        this.addAnimation("freeze",[30], 500);
+        this.renderable.addAnimation("walk_left", [0, 3]);
+        this.renderable.addAnimation("walk_right", [4, 7]);
+        this.renderable.addAnimation("jump_left", [8]);
+        this.renderable.addAnimation("jump_right", [11]);
+        this.renderable.addAnimation("fall_left", [9, 10], 200);
+        this.renderable.addAnimation("fall_right", [11, 12, 200]);
+        this.renderable.addAnimation("stand_left", [27]);
+        this.renderable.addAnimation("stand_right", [28]);
+        this.renderable.addAnimation("shoot_walk_right", [19], 120);
+        this.renderable.addAnimation("shoot_walk_left", [14], 120);
+        this.renderable.addAnimation("shoot_jump_right", [20], 120);
+        this.renderable.addAnimation("shoot_jump_left", [15], 120);
+        this.renderable.addAnimation("surf", [29]);
+        this.renderable.addAnimation("die", [25, 26], 200);
+        this.renderable.addAnimation("freeze",[30], 500);
 
-        this.setCurrentAnimation("stand_right");
+        this.renderable.setCurrentAnimation("stand_right");
         this.currentAnimation = "stand_right";
         this.alwaysUpdate = true;
 
@@ -42,12 +41,11 @@ game.Retep = me.Sprite.extend({
 
         this.body.collisionType = me.collision.types.PLAYER_OBJECT;
         this.type = "retep";
-
     },
 
     draw: function(renderer){
-        this._super(me.Sprite, 'draw', [renderer]);
-        this.font.draw(renderer, "dfsdf", -20, -10);
+        this._super(me.Entity, 'draw', [renderer]);
+        this.font.draw(renderer, this.opponentName, -40, -23);
     },
 
     onNetworkUpdate: function (data){
@@ -59,12 +57,12 @@ game.Retep = me.Sprite.extend({
     setMyCurrentAnimation: function(animation){
         if(animation !== this.currentAnimation){
             this.currentAnimation = animation;
-            this.setCurrentAnimation(this.currentAnimation);
+            this.renderable.setCurrentAnimation(this.currentAnimation);
         }
     },
 
     update: function (dt) {
-        this._super(me.Sprite, "update", [dt]);
+        this._super(me.Entity, "update", [dt]);
         me.collision.check(this);
         return true;
     },

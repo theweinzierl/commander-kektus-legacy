@@ -60,12 +60,15 @@ export default game = {
             this.netCom = new NetCommunicator(this.playerName);
             this.netCom.onGameDataReceived = this.onGameDataReceived.bind(this);
             this.netCom.onOpponentConnected = this.onOpponentConnected.bind(this);
-            this.netCom.connect();
+            this.netCom.connect();            
         }
         me.state.change(me.state.PLAY);
-
-
     },
+
+    reinitiateRetep(){          
+        this.retep = me.game.world.addChild(me.pool.pull("Retep", 32, 544, this.opponentName));
+    },
+
 
     netCom: null,
 
@@ -75,11 +78,13 @@ export default game = {
 
     playerName: "",
 
+    opponentName: "",
+
     onGameDataReceived(data){
         
         if(data !== undefined && this.retep !== null){       
             if(data.entity === "retep"){
-                console.log(data);
+               // console.log(data);
              this.retep.onNetworkUpdate(data);
             }else if(data.entity === "retepShot"){
                 me.game.world.addChild(me.pool.pull("LaserBlastRetep", data.posX, data.posY, data.direction));
@@ -88,8 +93,10 @@ export default game = {
     },
 
     onOpponentConnected(opponentName){
-        this.retep = me.game.world.addChild(me.pool.pull("Retep", 0, 0, opponentName));
-        console.log("retep connected");
+        if(this.retep === null){
+            this.retep = me.game.world.addChild(me.pool.pull("Retep", 32, 544, opponentName));
+            this.opponentName = opponentName;
+        }
     },
 
     sendGameData(data){

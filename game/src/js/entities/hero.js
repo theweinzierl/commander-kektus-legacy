@@ -1,4 +1,5 @@
 
+
 game.PlayerEntity = me.Entity.extend({
 
     init: function (x, y, settings) {
@@ -55,11 +56,10 @@ game.PlayerEntity = me.Entity.extend({
 
     draw: function(renderer){
         this._super(me.Entity, 'draw', [renderer]);
-        this.font.draw(renderer, game.playerName, -20, -10);
+        this.font.draw(renderer, game.playerName, -10, 0);
     },
 
     update: function (dt) {
-
 
         if(game.mode === "multiplayer"){
             //put onNetUpdate, if you want to limit update rate
@@ -244,21 +244,21 @@ game.PlayerEntity = me.Entity.extend({
         }
     },
 
-    freeze: function(){
+    freeze(){
         if(this.freezed) return;
         this.freezed = true;
         this.curAnimation = "freeze";
         this.renderable.setCurrentAnimation("freeze", function () { this.freezed = false; }.bind(this));
     },
 
-    die: function(){
+    die(){
         this.dead = true;
         this.renderable.setCurrentAnimation("die");
         this.curAnimation = "die";
         this.body.vel.y = -200;
         this.body.force.x = 0;
         me.audio.play("die");
-        window.setTimeout(() => me.levelDirector.reloadLevel(), 2000);
+        window.setTimeout(() => me.levelDirector.reloadLevel({onLoaded: game.reinitiateRetep.bind(game)}), 2000);
     },
 
     updateRetep(){
