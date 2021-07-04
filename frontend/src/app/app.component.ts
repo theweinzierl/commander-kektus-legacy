@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ck-frontend';
+  title = 'Commander Kektus - Aliens ate my Typescript-Code!';
 }
