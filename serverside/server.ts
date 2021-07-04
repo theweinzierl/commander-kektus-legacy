@@ -86,11 +86,10 @@ wss.on("connection", function (ws: WebSocketClient) {
 function setPlayerName(clientId: number, playerName: string | null): void{
     let client: Client | undefined = curClients.get(clientId);
     if(client === undefined) return;
-    let checkedPlayerName: string = playerName;
     if(playerName === null || playerName === "Kektus"){
-        checkedPlayerName = ("Player_" + clientId);
+        playerName = ("Player_" + clientId);
     }
-    client.playerName = checkedPlayerName;
+    client.playerName = playerName;
 }
 
 function getWaitingOpponent(): number{
