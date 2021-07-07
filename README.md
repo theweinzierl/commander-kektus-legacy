@@ -37,9 +37,9 @@ Ein Build kann mit `npm run deploy` erstellt werden.
 ### 2. Frontend
 Das Frontend liegt im Verzeichnis /frontend. Es wurde mit angular erstellt. Es wird ein Name abgefragt und zudem kann der Spielmodus (Singel- oder Multiplayer) ausgewählt werden.
 
-### Backend/ Game-Server
+### 3. Multiplayer-Server
 
-Der Game-Server erfüllt folgende Funktionen
+Der Multiplayer-Server erfüllt folgende Funktionen
 - Anmeldung
 - Spielvermittlung
 - Datenaustausch
