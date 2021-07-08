@@ -140,10 +140,10 @@
       this[globalName] = mainExports;
     }
   }
-})({"5jW0T":[function(require,module,exports) {
+})({"cNqZK":[function(require,module,exports) {
 var HMR_HOST = null;
 var HMR_PORT = null;
-var HMR_SECURE = false;
+var HMR_SECURE = true;
 var HMR_ENV_HASH = "d751713988987e9331980363e24189ce";
 module.bundle.HMR_BUNDLE_ID = "ad8f65809b71f8b056dc8bc4d3bb8192"; // @flow
 /* global HMR_HOST, HMR_PORT, HMR_ENV_HASH, HMR_SECURE */ /*::
@@ -27921,7 +27921,7 @@ exports.default = game = {
         me.state.change(me.state.PLAY);
     },
     reinitiateRetep () {
-        this.retep = me.game.world.addChild(me.pool.pull("Retep", 32, 544, this.opponentName));
+        if (this.retep !== null) this.retep = me.game.world.addChild(me.pool.pull("Retep", 32, 544, this.opponentName));
     },
     netCom: null,
     commander: null,
@@ -28070,9 +28070,9 @@ game.resources = [
         src: "data/fnt/arial.fnt"
     },
     {
-        "name": "walk",
-        "type": "audio",
-        "src": "data/sfx/"
+        name: "walk",
+        type: "audio",
+        src: "data/sfx/"
     },
     {
         "name": "jump",
@@ -28135,24 +28135,9 @@ game.resources = [
         "src": "data/img/map/desert_tiles.png"
     },
     {
-        "name": "water",
+        "name": "16x16tiles",
         "type": "image",
-        "src": "data/img/sprite/water.png"
-    },
-    {
-        "name": "laserblast",
-        "type": "image",
-        "src": "data/img/sprite/laserblast.png"
-    },
-    {
-        "name": "neuralblast",
-        "type": "image",
-        "src": "data/img/sprite/neuralblast.png"
-    },
-    {
-        "name": "torch",
-        "type": "image",
-        "src": "data/img/sprite/torch.png"
+        "src": "data/img/sprite/16x16tiles.png"
     },
     {
         "name": "platform",
@@ -28565,7 +28550,7 @@ game.Mushroom = me.Sprite.extend({
 game.KektusThorn = me.Entity.extend({
     init: function(x, y, directionX, directionY, m) {
         let settings = {
-            image: 'laserblast',
+            image: '16x16tiles',
             width: 16,
             height: 16,
             framewidth: 16
@@ -28580,14 +28565,14 @@ game.KektusThorn = me.Entity.extend({
         this.body.setMaxVelocity(3, 3 * m);
         this.alwaysUpdate = true;
         this.renderable.addAnimation("shoot", [
-            0,
-            1,
-            2,
-            3,
-            4
+            18,
+            19,
+            20,
+            21,
+            22
         ]);
         this.renderable.addAnimation("explode", [
-            5
+            23
         ], 100);
         this.renderable.setCurrentAnimation("shoot");
         this.type = "kektusthorn";
@@ -28903,7 +28888,7 @@ game.PlayerEntity = me.Entity.extend({
 game.LaserBlast = me.Entity.extend({
     init: function(x, y, direction) {
         let settings = {
-            image: 'neuralblast',
+            image: '16x16tiles',
             width: 16,
             height: 16,
             framewidth: 16
@@ -28915,14 +28900,14 @@ game.LaserBlast = me.Entity.extend({
         ]);
         this.alwaysUpdate = true;
         this.renderable.addAnimation("shoot", [
-            0,
-            1,
-            2,
-            3,
-            4
+            12,
+            13,
+            14,
+            15,
+            16
         ]);
         this.renderable.addAnimation("explode", [
-            5
+            17
         ], 100);
         this.renderable.setCurrentAnimation("shoot");
         this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
@@ -28962,7 +28947,7 @@ game.LaserBlast = me.Entity.extend({
 game.LaserBlastRetep = me.Entity.extend({
     init: function(x, y, direction) {
         let settings = {
-            image: 'neuralblast',
+            image: '16x16tiles',
             width: 16,
             height: 16,
             framewidth: 16
@@ -28974,14 +28959,14 @@ game.LaserBlastRetep = me.Entity.extend({
         ]);
         this.alwaysUpdate = true;
         this.renderable.addAnimation("shoot", [
-            0,
-            1,
-            2,
-            3,
-            4
+            12,
+            13,
+            14,
+            15,
+            16
         ]);
         this.renderable.addAnimation("explode", [
-            5
+            17
         ], 100);
         this.renderable.setCurrentAnimation("shoot");
         this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
@@ -29138,12 +29123,24 @@ game.Retep = me.Entity.extend({
 },{}],"4Ezvv":[function(require,module,exports) {
 game.Water = me.Entity.extend({
     init: function(x, y, settings) {
-        // image was already defined in tiled
+        settings = {
+            image: '16x16tiles',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
         this._super(me.Entity, 'init', [
             x,
             y,
             settings
         ]);
+        this.renderable.addAnimation("wave", [
+            6,
+            7,
+            8,
+            9
+        ]);
+        this.renderable.setCurrentAnimation("wave");
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;
         this.type = "obstacle";
     },
@@ -29168,12 +29165,25 @@ game.Thorn = me.Entity.extend({
 });
 game.Torch = me.Entity.extend({
     init: function(x, y, settings) {
+        settings = {
+            image: '16x16tiles',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
         this._super(me.Entity, 'init', [
             x,
             y,
             settings
         ]);
         this.body.collisionType = me.collision.types.NO_OBJECT;
+        this.renderable.addAnimation("burn", [
+            0,
+            1,
+            2,
+            3
+        ]);
+        this.renderable.setCurrentAnimation("burn");
     },
     onCollision: function(response, other) {
         return false;
@@ -29242,5 +29252,5 @@ game.LevelEntity = me.LevelEntity.extend({
 
 },{}],"prN38":[function(require,module,exports) {
 
-},{}]},["5jW0T","69epD"], "69epD", "parcelRequireb4f6")
+},{}]},["cNqZK","69epD"], "69epD", "parcelRequireb4f6")
 

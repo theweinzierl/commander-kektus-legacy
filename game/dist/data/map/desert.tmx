@@ -80,398 +80,74 @@
     <property name="image" value="commander"/>
    </properties>
   </object>
-  <object id="7" name="Water" x="160" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="10" name="Water" x="176" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="11" name="Water" x="192" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="12" name="Water" x="208" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="13" name="Water" x="224" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="14" name="Water" x="240" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="15" name="Water" x="256" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="16" name="Water" x="272" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="17" name="Water" x="288" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="18" name="Torch" x="128" y="576" width="16" height="16">
-   <properties>
-    <property name="image" value="torch"/>
-   </properties>
-  </object>
-  <object id="19" name="Water" x="304" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="20" name="Water" x="336" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="21" name="Water" x="320" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="22" name="Water" x="352" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="23" name="Torch" x="192" y="560" width="16" height="16">
-   <properties>
-    <property name="image" value="torch"/>
-   </properties>
-  </object>
-  <object id="24" name="Torch" x="256" y="528" width="16" height="16">
-   <properties>
-    <property name="image" value="torch"/>
-   </properties>
-  </object>
-  <object id="25" name="Torch" x="320" y="496" width="16" height="16">
-   <properties>
-    <property name="image" value="torch"/>
-   </properties>
-  </object>
-  <object id="35" name="Water" x="1168" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="36" name="Water" x="1184" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="37" name="Water" x="1200" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="38" name="Water" x="1216" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="39" name="Water" x="1232" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="40" name="Water" x="1248" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="41" name="Water" x="1264" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="42" name="Water" x="1280" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="43" name="Water" x="1296" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="44" name="Water" x="1312" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="45" name="Water" x="1328" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="46" name="Water" x="1344" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="47" name="Water" x="1360" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="48" name="Water" x="1376" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="49" name="Water" x="1392" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="50" name="Water" x="1408" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="51" name="Water" x="1424" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="52" name="Water" x="1440" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="53" name="Water" x="1456" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="54" name="Water" x="1472" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="55" name="Water" x="1488" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="56" name="Water" x="1504" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="57" name="Water" x="1520" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="58" name="Water" x="1536" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="59" name="Water" x="1552" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="60" name="Water" x="1568" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="61" name="Water" x="1584" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="62" name="Water" x="1616" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="63" name="Water" x="1632" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="64" name="Water" x="1664" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="65" name="Water" x="1680" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="66" name="Water" x="1712" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="67" name="Water" x="1600" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="68" name="Water" x="1648" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="69" name="Water" x="1696" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="70" name="Water" x="1728" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="71" name="Water" x="1744" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="72" name="Water" x="1760" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="73" name="Water" x="1776" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="74" name="Water" x="1792" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="75" name="Water" x="1808" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="76" name="Water" x="1824" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="77" name="Water" x="1840" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="78" name="Water" x="1856" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="79" name="Water" x="1872" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="80" name="Water" x="1888" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
-  <object id="81" name="Water" x="1904" y="624" width="16" height="16">
-   <properties>
-    <property name="frameWidth" value="16"/>
-    <property name="image" value="water"/>
-   </properties>
-  </object>
+  <object id="7" name="Water" x="160" y="624" width="16" height="16"/>
+  <object id="10" name="Water" x="176" y="624" width="16" height="16"/>
+  <object id="11" name="Water" x="192" y="624" width="16" height="16"/>
+  <object id="12" name="Water" x="208" y="624" width="16" height="16"/>
+  <object id="13" name="Water" x="224" y="624" width="16" height="16"/>
+  <object id="14" name="Water" x="240" y="624" width="16" height="16"/>
+  <object id="15" name="Water" x="256" y="624" width="16" height="16"/>
+  <object id="16" name="Water" x="272" y="624" width="16" height="16"/>
+  <object id="17" name="Water" x="288" y="624" width="16" height="16"/>
+  <object id="18" name="Torch" x="128" y="576" width="16" height="16"/>
+  <object id="19" name="Water" x="304" y="624" width="16" height="16"/>
+  <object id="20" name="Water" x="336" y="624" width="16" height="16"/>
+  <object id="21" name="Water" x="320" y="624" width="16" height="16"/>
+  <object id="22" name="Water" x="352" y="624" width="16" height="16"/>
+  <object id="23" name="Torch" x="192" y="560" width="16" height="16"/>
+  <object id="24" name="Torch" x="256" y="528" width="16" height="16"/>
+  <object id="25" name="Torch" x="320" y="496" width="16" height="16"/>
+  <object id="35" name="Water" x="1168" y="624" width="16" height="16"/>
+  <object id="36" name="Water" x="1184" y="624" width="16" height="16"/>
+  <object id="37" name="Water" x="1200" y="624" width="16" height="16"/>
+  <object id="38" name="Water" x="1216" y="624" width="16" height="16"/>
+  <object id="39" name="Water" x="1232" y="624" width="16" height="16"/>
+  <object id="40" name="Water" x="1248" y="624" width="16" height="16"/>
+  <object id="41" name="Water" x="1264" y="624" width="16" height="16"/>
+  <object id="42" name="Water" x="1280" y="624" width="16" height="16"/>
+  <object id="43" name="Water" x="1296" y="624" width="16" height="16"/>
+  <object id="44" name="Water" x="1312" y="624" width="16" height="16"/>
+  <object id="45" name="Water" x="1328" y="624" width="16" height="16"/>
+  <object id="46" name="Water" x="1344" y="624" width="16" height="16"/>
+  <object id="47" name="Water" x="1360" y="624" width="16" height="16"/>
+  <object id="48" name="Water" x="1376" y="624" width="16" height="16"/>
+  <object id="49" name="Water" x="1392" y="624" width="16" height="16"/>
+  <object id="50" name="Water" x="1408" y="624" width="16" height="16"/>
+  <object id="51" name="Water" x="1424" y="624" width="16" height="16"/>
+  <object id="52" name="Water" x="1440" y="624" width="16" height="16"/>
+  <object id="53" name="Water" x="1456" y="624" width="16" height="16"/>
+  <object id="54" name="Water" x="1472" y="624" width="16" height="16"/>
+  <object id="55" name="Water" x="1488" y="624" width="16" height="16"/>
+  <object id="56" name="Water" x="1504" y="624" width="16" height="16"/>
+  <object id="57" name="Water" x="1520" y="624" width="16" height="16"/>
+  <object id="58" name="Water" x="1536" y="624" width="16" height="16"/>
+  <object id="59" name="Water" x="1552" y="624" width="16" height="16"/>
+  <object id="60" name="Water" x="1568" y="624" width="16" height="16"/>
+  <object id="61" name="Water" x="1584" y="624" width="16" height="16"/>
+  <object id="62" name="Water" x="1616" y="624" width="16" height="16"/>
+  <object id="63" name="Water" x="1632" y="624" width="16" height="16"/>
+  <object id="64" name="Water" x="1664" y="624" width="16" height="16"/>
+  <object id="65" name="Water" x="1680" y="624" width="16" height="16"/>
+  <object id="66" name="Water" x="1712" y="624" width="16" height="16"/>
+  <object id="67" name="Water" x="1600" y="624" width="16" height="16"/>
+  <object id="68" name="Water" x="1648" y="624" width="16" height="16"/>
+  <object id="69" name="Water" x="1696" y="624" width="16" height="16"/>
+  <object id="70" name="Water" x="1728" y="624" width="16" height="16"/>
+  <object id="71" name="Water" x="1744" y="624" width="16" height="16"/>
+  <object id="72" name="Water" x="1760" y="624" width="16" height="16"/>
+  <object id="73" name="Water" x="1776" y="624" width="16" height="16"/>
+  <object id="74" name="Water" x="1792" y="624" width="16" height="16"/>
+  <object id="75" name="Water" x="1808" y="624" width="16" height="16"/>
+  <object id="76" name="Water" x="1824" y="624" width="16" height="16"/>
+  <object id="77" name="Water" x="1840" y="624" width="16" height="16"/>
+  <object id="78" name="Water" x="1856" y="624" width="16" height="16"/>
+  <object id="79" name="Water" x="1872" y="624" width="16" height="16"/>
+  <object id="80" name="Water" x="1888" y="624" width="16" height="16"/>
+  <object id="81" name="Water" x="1904" y="624" width="16" height="16"/>
   <object id="112" name="Platform" x="896" y="576" width="192" height="16"/>
   <object id="120" name="Platform" x="1392" y="128" width="240" height="16"/>
-  <object id="124" name="Torch" x="768" y="160" width="16" height="16">
-   <properties>
-    <property name="image" value="torch"/>
-   </properties>
-  </object>
-  <object id="125" name="Torch" x="1344" y="160" width="16" height="16">
-   <properties>
-    <property name="image" value="torch"/>
-   </properties>
-  </object>
+  <object id="124" name="Torch" x="768" y="160" width="16" height="16"/>
+  <object id="125" name="Torch" x="1344" y="160" width="16" height="16"/>
   <object id="134" name="Thorn" x="864" y="608" width="256" height="16"/>
   <object id="136" name="LevelEntity" x="832" y="144" width="32" height="32">
    <properties>

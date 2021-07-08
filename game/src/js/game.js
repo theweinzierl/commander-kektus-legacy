@@ -65,8 +65,8 @@ export default game = {
         me.state.change(me.state.PLAY);
     },
 
-    reinitiateRetep(){          
-        this.retep = me.game.world.addChild(me.pool.pull("Retep", 32, 544, this.opponentName));
+    reinitiateRetep(){    
+        if(this.retep !== null) this.retep = me.game.world.addChild(me.pool.pull("Retep", 32, 544, this.opponentName));
     },
 
 

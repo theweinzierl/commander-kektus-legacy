@@ -1,11 +1,7 @@
 game.resources = [
     { name: "Arial", type:"image", src: "data/fnt/arial.png" },
     { name: "Arial", type:"binary", src: "data/fnt/arial.fnt"},
-    {
-        "name": "walk",
-        "type": "audio",
-        "src": "data/sfx/"
-    },
+    { name: "walk", type: "audio", src: "data/sfx/"},
     {
         "name": "jump",
         "type": "audio",
@@ -67,24 +63,9 @@ game.resources = [
         "src": "data/img/map/desert_tiles.png"
     },
     {
-        "name": "water",
+        "name": "16x16tiles",
         "type": "image",
-        "src": "data/img/sprite/water.png"
-    },
-    {
-        "name": "laserblast",
-        "type": "image",
-        "src": "data/img/sprite/laserblast.png"
-    },
-    {
-        "name": "neuralblast",
-        "type": "image",
-        "src": "data/img/sprite/neuralblast.png"
-    },
-    {
-        "name": "torch",
-        "type": "image",
-        "src": "data/img/sprite/torch.png"
+        "src": "data/img/sprite/16x16tiles.png"
     },
     {
         "name": "platform",

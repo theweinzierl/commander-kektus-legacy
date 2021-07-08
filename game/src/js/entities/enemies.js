@@ -339,7 +339,7 @@ game.KektusThorn = me.Entity.extend({
     init: function (x, y, directionX, directionY, m) {
 
         let settings = {
-            image: 'laserblast',
+            image: '16x16tiles',
             width: 16,
             height: 16,
             framewidth: 16
@@ -352,8 +352,8 @@ game.KektusThorn = me.Entity.extend({
         this.body.setMaxVelocity(3, 3 * m);
         this.alwaysUpdate = true;
 
-        this.renderable.addAnimation("shoot", [0, 1, 2, 3, 4]);
-        this.renderable.addAnimation("explode", [5], 100);
+        this.renderable.addAnimation("shoot", [18, 19, 20, 21, 22]);
+        this.renderable.addAnimation("explode", [23], 100);
         this.renderable.setCurrentAnimation("shoot");
 
         this.type = "kektusthorn";

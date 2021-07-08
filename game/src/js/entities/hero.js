@@ -290,7 +290,7 @@ game.LaserBlast = me.Entity.extend({
     init: function (x, y, direction) {
 
         let settings = {
-            image: 'neuralblast',
+            image: '16x16tiles',
             width: 16,
             height: 16,
             framewidth: 16
@@ -300,8 +300,8 @@ game.LaserBlast = me.Entity.extend({
         
         this.alwaysUpdate = true;
 
-        this.renderable.addAnimation("shoot", [0, 1, 2, 3, 4]);
-        this.renderable.addAnimation("explode", [5], 100);
+        this.renderable.addAnimation("shoot", [12, 13, 14, 15, 16]);
+        this.renderable.addAnimation("explode", [17], 100);
         this.renderable.setCurrentAnimation("shoot");
 
         
@@ -364,7 +364,7 @@ game.LaserBlastRetep = me.Entity.extend({
     init: function (x, y, direction) {
 
         let settings = {
-            image: 'neuralblast',
+            image: '16x16tiles',
             width: 16,
             height: 16,
             framewidth: 16
@@ -374,8 +374,8 @@ game.LaserBlastRetep = me.Entity.extend({
         
         this.alwaysUpdate = true;
 
-        this.renderable.addAnimation("shoot", [0, 1, 2, 3, 4]);
-        this.renderable.addAnimation("explode", [5], 100);
+        this.renderable.addAnimation("shoot", [12, 13, 14, 15, 16]);
+        this.renderable.addAnimation("explode", [17], 100);
         this.renderable.setCurrentAnimation("shoot");
 
         

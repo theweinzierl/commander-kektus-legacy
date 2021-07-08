@@ -1,8 +1,19 @@
 game.Water = me.Entity.extend({
 
     init: function (x, y, settings) {
-        // image was already defined in tiled
-        this._super(me.Entity, 'init', [x, y, settings]);
+        
+        settings = {
+            image: '16x16tiles',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
+
+        this._super(me.Entity, 'init', [x, y, settings]);       
+
+        this.renderable.addAnimation("wave", [6, 7, 8, 9]);
+        this.renderable.setCurrentAnimation("wave");
+
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;
         this.type = "obstacle";
     },
@@ -31,8 +42,19 @@ game.Thorn = me.Entity.extend({
 game.Torch = me.Entity.extend({
 
     init: function (x, y, settings) {
+
+        settings = {
+            image: '16x16tiles',
+            width: 16,
+            height: 16,
+            framewidth: 16
+        };
+
         this._super(me.Entity, 'init', [x, y, settings]);
         this.body.collisionType = me.collision.types.NO_OBJECT;
+
+        this.renderable.addAnimation("burn", [0, 1, 2, 3]);
+        this.renderable.setCurrentAnimation("burn");
     },
 
     onCollision: function (response, other) {
