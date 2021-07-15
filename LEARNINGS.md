@@ -9,3 +9,17 @@ Der std-http-Server muss mit host: 0.0.0.0 initialisiert werden, damit Anfragen 
 
 ## Verwendung einer Engine
 Zunächst wollten wir das Spiel "from scratch" selbst schreiben. Allerdings haben wir mit der Zeit gemerkt, welcher Aufwand hinter der Entwicklung einer eigenen "Engine" steckt. Die Implementierung von Steuerung, Kollisionsabfragen und Levelediting hätte wahrscheinlich dazu geführt, dass wir nicht zur Programmierung des eigentlichen Spiels gekommen wären. Aus diesem Grund haben wir uns auf die Suche nach bestehenden Web-Game-Engines gemacht und sind dabei auf melon.js und dem Leveleditor Tiled gestoßen, auf denen unser Projekt nun aufbaut.
+
+## Warum Melon.js:
+
+Tatsächlich bieten die neuesten Versionen der beliebtesten Browser (z. B. Chrome, Firefox und Edge) Unterstützung für fortschrittliches Grafik-Rendering (wie WebGL), was sehr interessante Möglichkeiten zur Spieleentwicklung bietet. Und um das Spiel zu entwickeln, haben wir nach einem Framework gesucht, das beim Schreiben des Codes hilft und dafür fertige Bibliotheken bereitstellt.
+
+Nach Recherche im Internet, haben wir uns für eine Melon.js entschieden, weil:
+
+•	Für den Anfang ist es völlig unabhängig, es sind keine externen Abhängigkeiten erforderlich, damit es funktioniert.
+
+•	Es hat jedoch die Integration mit mehreren Tools von Drittanbietern, die uns das Entwicklungsprozess erleichtern, wie Tiled (mit dem die Karten und Bühnen für das Spiel erstellt werden können), TexturePacker (der auch dabei hilft, den erforderlichen Texturatlas zu erstellen, um das Sprite-Management zu vereinfachen und zu optimieren).
+
+•	2D-Physik-Engine integriert. Das bedeutet, dass es ermöglicht, sofort auf eine sofort einsatzbereite realistische 2D-Bewegung und Kollisionserkennung zugreifen zu können.
+
+•	Unterstützung für die Sound-API, mit der die Soundeffekte und Hintergrundmusik mit herausragender Einfachheit hinzufügen können.
