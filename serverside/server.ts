@@ -31,6 +31,9 @@ var idCounter: number = 0;
 
 const wss = new WebSocketServer(8080);
 
+wss.on("error", function (e: string){
+    console.log("An Error occured: " + e);
+});
 
 wss.on("connection", function (ws: WebSocketClient) {
 
