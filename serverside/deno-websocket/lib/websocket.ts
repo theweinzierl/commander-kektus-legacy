@@ -31,8 +31,8 @@ export class WebSocketServer extends EventEmitter {
     this.server = serveTLS( {
       hostname: "0.0.0.0",
       port: 8080,
-      certFile: "./cert.crt",
-      keyFile: "./key.key",
+      certFile: "/etc/letsencrypt/live/commander.kektus.de/fullchain.pem",
+      keyFile: "/etc/letsencrypt/live/commander.kektus.de/privkey.pem",
     }
     );
     for await (const req of this.server) {
