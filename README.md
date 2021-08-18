@@ -54,7 +54,7 @@ deno run --allow-net --allow-read ./server.ts
 ```
 
 ## Hosting
-Der Game-Server läuft als ec2-Instanz bei aws und ist unter der IP 18.192.24.53 erreichbar. Auf Port 8080 lauscht der WebsocketServer. Auf Port 1234 läuft experimentell ein akuteller Build des Spiels.
+Der Game-Server läuft als ec2-Instanz bei aws und ist unter der IP 18.192.24.53 erreichbar. Auf Port 8080 lauscht der WebsocketServer. Auf Port 1234 läuft experimentell ein aktueller Build des Spiels.
 
 ACHTUNG: Wir nutzen ein selbstsigniertes Zertifikat, weil manche Browser nur eine verschlüsselte Websocket-Verbindung zulassen. Unter Umständen müssen im Browser die Zertifikate unter
 - https://18.192.24.53:8080
