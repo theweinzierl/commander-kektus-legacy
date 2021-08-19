@@ -24,7 +24,7 @@ Nach Recherche im Internet, haben wir uns für eine Melon.js entschieden, weil:
 
 - Die Unterstützung der Sound-API, mit der Soundeffekte sowie Hintergrundmusik mit herausragender Einfachheit hinzufügen werden können.
 
-- Außerdem ist Melon.js leichtgewichtig und mit den gägnisten Browser kompatibel
+- Melon.js ist leichtgewichtig und mit den gängigsten Browsern kompatibel.
 
 ## https, wws und certBot
 
